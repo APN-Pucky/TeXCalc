@@ -1,5 +1,7 @@
 package TeXCalc.gui;
 
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -15,13 +17,16 @@ import TeXCalc.latex.Latex;
 
 public class Cell{
 	
-	JTextArea text;
-	JLabel icon;
+	protected JTextArea text;
+	protected JLabel icon;
 
-	public Cell(Main m) {
+	public Cell() {
+		this("");
+	}
+		public Cell(String stext) {
 		
         icon=new JLabel();
-        text = new JTextArea();
+        text = new JTextArea(stext);
         text.addKeyListener((new KeyListener() {
 
             @Override
@@ -37,8 +42,19 @@ public class Cell{
                 
             }
         }));
-        m.add(text);
-        m.add(icon);
+        update();
+	}
+	
+	public void link(Container m)
+	{
+		m.add(text);
+		m.add(icon);
+	}
+	
+	public void unlink(Container m)
+	{
+		m.remove(text);
+		m.remove(icon);
 	}
 	
 	private boolean updating=false,reupdate = false;
