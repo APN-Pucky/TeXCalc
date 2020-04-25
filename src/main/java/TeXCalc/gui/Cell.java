@@ -1,29 +1,33 @@
 package TeXCalc.gui;
 
-import java.awt.Component;
 import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import TeXCalc.latex.Latex;
 
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Cell{
-	
 	protected JTextArea text;
 	protected JLabel icon;
 
 	public Cell() {
 		this("");
 	}
-		public Cell(String stext) {
+	@JsonCreator
+	public Cell(@JsonProperty("text") String stext) {
 		
         icon=new JLabel();
         text = new JTextArea(stext);
@@ -43,6 +47,14 @@ public class Cell{
             }
         }));
         update();
+	}
+	
+	public String getText() {
+		return text.getText();
+	}
+	
+	public void setText(String text) {
+		this.text.setText(text);
 	}
 	
 	public void link(Container m)

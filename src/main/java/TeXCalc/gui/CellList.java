@@ -2,15 +2,35 @@ package TeXCalc.gui;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JPanel;
 
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 public class CellList extends JPanel
 {
-	public ArrayList<Cell> cells = new ArrayList<Cell>();
+	@JsonValue
+	@JsonProperty("property")
+	@JsonDeserialize(as=ArrayList.class, contentAs=Cell.class)
+	public List<Cell> cells = new ArrayList<Cell>();
+	
+	public CellList(Cell[] cells) {
+		this();
+		this.cells = Arrays.asList(cells);
+		for(Cell c : cells)
+		{
+			c.link(this);
+		}
+	}
 	
 	public CellList() {
-		this(5);
+		this(0);
 	}
 	public CellList(int number) {
 		this.setLayout(new GridLayout(0,2,0,20));
@@ -19,6 +39,12 @@ public class CellList extends JPanel
 			increase();
 		}
 	}
+	
+	public void update() {
+		for(Cell c : cells)
+			c.queueUpdate();
+	}
+	
 	
 	public void increase()
 	{

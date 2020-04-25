@@ -15,6 +15,8 @@ import javax.swing.JLabel;
 
 import com.google.common.io.Files;
 
+import TeXCalc.util.Task;
+
 public class Latex {
 
 	public static BufferedImage toImage(String latex) {
@@ -55,8 +57,8 @@ public class Latex {
 			Process p = pb.start();
 			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), true);
 			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), true);
-			new Thread(fluxSortie).start();
-			new Thread(fluxErreur).start();
+			Task.startUntracked(fluxSortie);
+			Task.startUntracked(fluxErreur);
 			p.waitFor();
 			long stopTime = System.nanoTime();
 			System.out.println((stopTime - startTime) / 1.e9 + " s");
@@ -73,9 +75,9 @@ public class Latex {
 			bi = ImageIO.read(p.getInputStream());
 			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), true);
 			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), true);
-			new Thread(fluxSortie).start();
-			new Thread(fluxErreur).start();
-					p.waitFor();
+			Task.startUntracked(fluxSortie);
+			Task.startUntracked(fluxErreur);
+			p.waitFor();
 			
 		} catch (InterruptedException | IOException e1) {
 			// TODO Auto-generated catch block
