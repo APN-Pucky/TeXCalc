@@ -46,7 +46,7 @@ public class Cell{
                 
             }
         }));
-        update();
+        queueUpdate();
 	}
 	
 	public String getText() {
@@ -55,6 +55,12 @@ public class Cell{
 	
 	public void setText(String text) {
 		this.text.setText(text);
+	}
+	
+	public String toLatex() {
+		if(getText().trim().equals(""))return"";
+		String ret = "\\begin{equation}\n" + getText() + "\n\\end{equation}";
+		return ret;
 	}
 	
 	public void link(Container m)
@@ -86,7 +92,7 @@ public class Cell{
 	}
 	
 	public void update() {
-		BufferedImage img= Latex.toMathImage(text.getText());
+		BufferedImage img= Latex.snipMathImage(text.getText());
 		if ( img != null) {
         ImageIcon icon2=new ImageIcon(img);
         icon.setIcon(icon2);

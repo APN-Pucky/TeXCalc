@@ -18,22 +18,17 @@ import com.google.common.io.Files;
 import TeXCalc.util.Task;
 
 public class Latex {
-
-	public static BufferedImage toImage(String latex) {
+	
+	public static File toPdf(String latex) {
 		String uuid = UUID.randomUUID().toString();
 		String TEMP_DIRECTORY = ".tmp" + File.separator + uuid;
 		String TEMP_TEX_FILE_NAME = uuid; // for New22.tex
 		String ret = TEMP_DIRECTORY + File.separator + TEMP_TEX_FILE_NAME + ".png";
+		File ret_file = new File(TEMP_DIRECTORY + File.separator + TEMP_TEX_FILE_NAME + ".pdf") ;
 
 		// 1. Prepare the .tex file
 		String newLineWithSeparation = System.getProperty("line.separator") + System.getProperty("line.separator");
-		String math = "";
-		math += "\\documentclass[preview,crop,border=1pt,convert]{standalone}" + newLineWithSeparation;
-		math += "\\usepackage{amsfonts}" + newLineWithSeparation;
-		math += "\\usepackage{amsmath}" + newLineWithSeparation;
-		math += "\\begin{document}" + newLineWithSeparation;
-		math += latex + newLineWithSeparation;
-		math += "\\end{document}";
+		String math = latex;
 
 		System.out.println(" 2. Create the .tex file");
 		FileWriter writer = null;
@@ -66,9 +61,31 @@ public class Latex {
 			ex.printStackTrace();
 		}
 		
-		pb = new ProcessBuilder("pdftoppm",  "-png",
-				TEMP_TEX_FILE_NAME + ".pdf");
-		pb.directory(new File(TEMP_DIRECTORY + File.separator + "tex"));
+		try {
+			File tmp = new File(TEMP_DIRECTORY + File.separator + "tex" + File.separator + TEMP_TEX_FILE_NAME + ".pdf");
+			if(tmp.exists()) {
+			Files.move(tmp,new File(TEMP_DIRECTORY + File.separator + TEMP_TEX_FILE_NAME + ".pdf") );
+			}
+			else
+			{
+				ret_file = null;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ret_file = null;
+		}
+
+		cleanUp(TEMP_DIRECTORY, TEMP_TEX_FILE_NAME);
+
+		return ret_file;
+	}
+	
+	public static BufferedImage pdfToImage(File pdf_file) {
+		File f = pdf_file;
+		if(f==null) return null;
+		ProcessBuilder pb = new ProcessBuilder("pdftoppm",  "-png",
+				f.getAbsolutePath());
 		BufferedImage bi = null;
 		try {
 			Process p = pb.start();
@@ -83,12 +100,37 @@ public class Latex {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-
-
-		cleanUp(TEMP_DIRECTORY, TEMP_TEX_FILE_NAME);
-
 		return bi;
 	}
+	
+	public static BufferedImage toImage(String latex) {
+
+		String math = latex;
+		File f = toPdf(math);
+		BufferedImage b = pdfToImage(f);
+		f.delete();
+		return b;
+	}
+	
+
+	public static BufferedImage snipImage(String latex) {
+		String newLineWithSeparation = System.getProperty("line.separator") + System.getProperty("line.separator");
+
+		String math = "";
+		math += "\\documentclass[preview,crop,border=1pt,convert]{standalone}" + newLineWithSeparation;
+		math += "\\usepackage{amsfonts}" + newLineWithSeparation;
+		math += "\\usepackage{amsmath}" + newLineWithSeparation;
+		math += "\\begin{document}" + newLineWithSeparation;
+		math += latex + newLineWithSeparation;
+		math += "\\end{document}";
+		return toImage(math);
+	}
+
+
+	public static BufferedImage snipMathImage(String math) {
+		return snipImage("$" + math + "$");
+	}
+	
 
 	private static void cleanUp(String TEMP_DIRECTORY, String TEMP_TEX_FILE_NAME) {
 		// 5. Delete files
@@ -97,9 +139,5 @@ public class Latex {
 				//file.delete();
 			}
 		}
-	}
-
-	public static BufferedImage toMathImage(String math) {
-		return toImage("$" + math + "$");
 	}
 }

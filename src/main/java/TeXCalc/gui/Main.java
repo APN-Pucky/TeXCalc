@@ -2,8 +2,12 @@ package TeXCalc.gui;
 
 import java.awt.BorderLayout;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -13,6 +17,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Files;
+
+import TeXCalc.latex.Latex;
 
 public class Main extends JFrame {
 	CellList cl = null;
@@ -41,19 +48,52 @@ public class Main extends JFrame {
 	protected void addButtons(JToolBar toolBar) {
 		JButton button = null;
 
-		// first button
 		button = GUI.buttonSync("Save", () -> save());
 		toolBar.add(button);
+		
+		button = GUI.buttonAsync("Export", () -> export());
+		toolBar.add(button);
 
-		// second button
 		button = GUI.buttonAsync("Load", () -> load());
 		toolBar.add(button);
+		
 
 		button = GUI.buttonAsync("Refresh", () -> update());
 		toolBar.add(button);
 
 		button = GUI.buttonAsync("Add Cell", () -> addCell());
 		toolBar.add(button);
+		
+	}
+	
+	public void export() {
+		String tex = cl.toLaTeX();
+		PrintWriter writer;
+		try {
+			writer = new PrintWriter("export.tex", "UTF-8");
+			writer.print(tex);
+			writer.close();
+		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		File f = Latex.toPdf(tex);
+		try {
+			if(f.exists())
+				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export.pdf"));
+		} catch (IOException e) {
+			// TODO Auto-generated #catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			ImageIO.write(Latex.pdfToImage(new File(System.getProperty("user.dir") + File.separator + "export.pdf")), "png", new File(System.getProperty("user.dir") + File.separator + "export.png"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void addCell() {
@@ -85,6 +125,8 @@ public class Main extends JFrame {
 					cl = new CellList(cells);
 					this.remove(jsp);
 					this.add(jsp = new JScrollPane(cl));
+					this.pack();
+					this.repaint();
 	            } catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

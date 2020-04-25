@@ -18,11 +18,11 @@ public class CellList extends JPanel
 	@JsonValue
 	@JsonProperty("property")
 	@JsonDeserialize(as=ArrayList.class, contentAs=Cell.class)
-	public List<Cell> cells = new ArrayList<Cell>();
+	public ArrayList<Cell> cells = new ArrayList<Cell>();
 	
 	public CellList(Cell[] cells) {
 		this();
-		this.cells = Arrays.asList(cells);
+		this.cells = new ArrayList<Cell>(Arrays.asList(cells));
 		for(Cell c : cells)
 		{
 			c.link(this);
@@ -32,6 +32,7 @@ public class CellList extends JPanel
 	public CellList() {
 		this(0);
 	}
+	
 	public CellList(int number) {
 		this.setLayout(new GridLayout(0,2,0,20));
 		for ( int i = 0 ;  i  < number ; ++i)
@@ -58,5 +59,15 @@ public class CellList extends JPanel
 		Cell c = cells.get(cells.size()-1);
 		c.unlink(this);
 		cells.remove(c);
+	}
+	
+	public String toLaTeX()
+	{
+		String ret = "\\documentclass{article}\n\\begin{document}\n";
+		for(Cell c : cells)
+		{
+			ret += c.toLatex() + "\n";
+		}
+		return ret + "\\end{document}";
 	}
 }
