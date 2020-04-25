@@ -6,8 +6,10 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,17 +22,19 @@ import TeXCalc.latex.Latex;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Cell{
+	public static final String[] envs = { "equation", "latex", "align", ""};
+	
 	protected JTextArea text;
 	protected JLabel icon;
+	protected String env = "equation";
 
 	public Cell() {
 		this("");
 	}
 	@JsonCreator
 	public Cell(@JsonProperty("text") String stext) {
-		
         icon=new JLabel();
-        text = new JTextArea(stext);
+        text = new JTextArea(stext,5,50);
         text.addKeyListener((new KeyListener() {
 
             @Override
@@ -49,6 +53,14 @@ public class Cell{
         queueUpdate();
 	}
 	
+	public String getEnv() {
+		return env;
+	}
+	
+	public void setEnv(String set) {
+		this.env = set;
+	}
+	
 	public String getText() {
 		return text.getText();
 	}
@@ -56,23 +68,22 @@ public class Cell{
 	public void setText(String text) {
 		this.text.setText(text);
 	}
-	
+
 	public String toLatex() {
+		return toLatex(false,false);
+	}
+	public String toLatex(boolean stared, boolean math) {
 		if(getText().trim().equals(""))return"";
-		String ret = "\\begin{equation}\n" + getText() + "\n\\end{equation}";
+		
+		String ret = "";
+		if(!env.equals("latex")) {
+		if(math) ret += "$";
+		else ret +="\\begin{"+env + (stared?"*":"") +"}\n" ;}
+		ret +=getText() ;
+		if(!env.equals("latex")) {
+		if(math) ret += "$";
+		else ret +="\n\\end{"+env+(stared?"*":"") +"}";}
 		return ret;
-	}
-	
-	public void link(Container m)
-	{
-		m.add(text);
-		m.add(icon);
-	}
-	
-	public void unlink(Container m)
-	{
-		m.remove(text);
-		m.remove(icon);
 	}
 	
 	private boolean updating=false,reupdate = false;
@@ -92,7 +103,7 @@ public class Cell{
 	}
 	
 	public void update() {
-		BufferedImage img= Latex.snipMathImage(text.getText());
+		BufferedImage img= Latex.snipImage(toLatex(true,true));
 		if ( img != null) {
         ImageIcon icon2=new ImageIcon(img);
         icon.setIcon(icon2);

@@ -108,7 +108,8 @@ public class Latex {
 		String math = latex;
 		File f = toPdf(math);
 		BufferedImage b = pdfToImage(f);
-		f.delete();
+		if(f!= null)
+			f.delete();
 		return b;
 	}
 	
@@ -120,6 +121,7 @@ public class Latex {
 		math += "\\documentclass[preview,crop,border=1pt,convert]{standalone}" + newLineWithSeparation;
 		math += "\\usepackage{amsfonts}" + newLineWithSeparation;
 		math += "\\usepackage{amsmath}" + newLineWithSeparation;
+		math += "\\usepackage{amsthm}"+ newLineWithSeparation;
 		math += "\\begin{document}" + newLineWithSeparation;
 		math += latex + newLineWithSeparation;
 		math += "\\end{document}";

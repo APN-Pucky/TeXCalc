@@ -15,6 +15,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
 import javax.swing.JToolBar;
+import javax.swing.WindowConstants;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
@@ -40,9 +41,11 @@ public class Main extends JFrame {
 		
 		this.add(toolBar, BorderLayout.PAGE_START);
 		
-		this.add(jsp =new JScrollPane(cl = new CellList()));
+		this.add(jsp =new JScrollPane(cl = new CellList(11)));
 		this.setVisible(true);
 		this.pack();
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+		
 	}
 
 	protected void addButtons(JToolBar toolBar) {
@@ -80,7 +83,7 @@ public class Main extends JFrame {
 		
 		File f = Latex.toPdf(tex);
 		try {
-			if(f.exists())
+			if(f != null && f.exists())
 				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export.pdf"));
 		} catch (IOException e) {
 			// TODO Auto-generated #catch block
