@@ -10,22 +10,54 @@ import java.util.HashMap;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import TeXCalc.latex.Latex;
+import lombok.Getter;
+import lombok.Setter;
 
-public class CellList extends JPanel
+public class CellList
 {
-	@JsonValue
-	@JsonProperty("property")
-	@JsonDeserialize(as=ArrayList.class, contentAs=Cell.class)
+	@JsonIgnore
+	@Getter
+	private JPanel panel;
+	//@JsonValue
+	//@JsonProperty("property")
+	@JsonSerialize(as=ArrayList.class, contentAs=Cell.class)
 	public ArrayList<Cell> cells = new ArrayList<Cell>();
+	@JsonIgnore
 	private HashMap<Cell,JToolBar> barmap= new HashMap<Cell,JToolBar>();
+
+	//@JsonValue
+	//@JsonSerialize
+	@Getter
+	@Setter
+	private Latex latex;
+
+	@JsonIgnore
+	public String FRAMETOP =
+			"\\usepackage{amsfonts}\n"+
+			"\\usepackage{amsmath}\n" +
+			"\\usepackage{amsthm}\n"+
+			"\\usepackage{slashed}"+
+			"\\usepackage[compat=1.1.0]{tikz-feynman}\n" +
+			"\\DeclareMathOperator{\\Tr}{Tr}"+
+			"\\setlength\\parindent{0pt}"+
+			"\\begin{document}\n";
+	@JsonIgnore
+	public String FRAMEEND = "\\end{document}\n";
 	
 	public CellList(Cell[] cells) {
 		this();
@@ -41,10 +73,20 @@ public class CellList extends JPanel
 	}
 	
 	public CellList(int number) {
-		this.setLayout(new GridBagLayout());
+		panel = new JPanel();
+		latex = new Latex();
+		panel.setLayout(new GridBagLayout());
 		for ( int i = 0 ;  i  < number ; ++i)
 		{
 			increase();
+		}
+	}
+	
+	public void linkAll() {
+		for(int i =0 ; i  < cells.size(); ++i)
+		{
+			unlink(i);
+			link(i);
 		}
 	}
 	
@@ -56,6 +98,7 @@ public class CellList extends JPanel
 	public void link(int index) {
 
 		Cell cell = cells.get(index);
+		cell.setLatex(latex);
 		
 		JToolBar tools = new JToolBar(JToolBar.VERTICAL);
 		addButtons(tools,cell);
@@ -67,66 +110,68 @@ public class CellList extends JPanel
 		c.weighty = 0.1;
 		c.gridx = 0;
 		c.gridy = index;
-		add(tools, c);
+		panel.add(tools, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.5;
 		c.weighty = 0.1;
 		c.gridx = 1;
 		c.gridy = index;
-		add(cell.text, c);
+		panel.add(cell.text, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.5;
 		c.weighty = 0.1;
 		c.gridx = 2;
 		c.gridy = index;
-		add(cell.icon, c);
+		GUI.log.m(cell.getText()+ (cell.getLatex()==null));
+		panel.add(cell.icon, c);
 		
 	}
 	
 	protected void addButtons(JToolBar toolBar,Cell c) {
 		JButton button = null;
 
-		button = GUI.buttonSync("Clean", () -> {c.setText(""); c.queueUpdate();});
+		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){c.setText(""); c.queueUpdate();}});
 		toolBar.add(button);
 		
-		button = GUI.buttonSync("Remove", () -> {unlink(c);cells.remove(c);this.revalidate();this.repaint();});
+		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){unlink(c);cells.remove(c);panel.revalidate();panel.repaint();}});
 		toolBar.add(button);
 		
 		JComboBox<String> petList = new JComboBox<String>(Cell.envs);
 		toolBar.add(petList);
 		
-		petList.setSelectedItem(c.getEnv());	
+		petList.setSelectedItem(c.getEnvironment());	
 		
 		petList.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent event) {
 			       if (event.getStateChange() == ItemEvent.SELECTED) {
 			          String item = (String) event.getItem();
 			          // do something with object
-			          c.setEnv(item);
+			          c.setEnvironment(item);
 			          c.queueUpdate();
 			       }
 			    }   
 		});
 		
-		barmap.put(c, toolBar);
-		
+		barmap.put(c, toolBar);	
 	}
+	
 	public void unlink(Cell c) {
 		unlink(cells.indexOf(c));
 	}
 	public void unlink(int index) {
 		Cell cell = cells.get(index);
-		this.remove(cell.text);
-		this.remove(cell.icon);
-		this.remove(barmap.get(cell));
+		panel.remove(cell.text);
+		panel.remove(cell.icon);
+		if(barmap.get(cell) != null)
+			panel.remove(barmap.get(cell));
 		barmap.remove(cell);
 	}
 	
 	public void increase()
 	{
-		Cell c = new Cell();
+		Cell c = new Cell(latex);
 		cells.add(c);
 		link(cells.size()-1);
 	}

@@ -45,6 +45,13 @@ public class GUI {
 	}
 	}*/
 
+	public static boolean confirm(Component c ,String msg,String title) {
+		int n = JOptionPane.showConfirmDialog(c,
+			    msg,
+			    title,
+			    JOptionPane.YES_NO_OPTION);
+		return n ==JOptionPane.YES_OPTION;
+	}
 	
 	public static void info(String title , String msg) {
 		JOptionPane pane = new JOptionPane( new JScrollPane(GUI.area(msg)),JOptionPane.INFORMATION_MESSAGE);

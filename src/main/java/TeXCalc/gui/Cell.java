@@ -4,6 +4,7 @@ import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.regex.Pattern;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,26 +15,51 @@ import javax.swing.JToolBar;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import TeXCalc.debug.DebugFrame;
 import TeXCalc.latex.Latex;
+import TeXCalc.util.Log;
+import lombok.Getter;
+import lombok.Setter;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Cell{
-	public static final String[] envs = { "equation", "latex", "align", ""};
+	
+	public static final String[] envs = { "equation", "latex", "aligned", ""};
+	public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
+	public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
 	
 	protected JTextArea text;
-	protected JLabel icon;
-	protected String env = "equation";
+	protected JLabel icon = new JLabel();
+	@Getter @Setter
+	protected String environment = "equation";
+	
+	@Getter @Setter @JsonIgnore
+	protected Latex latex;
+	
+
+	private boolean updating=false,reupdate = false;
 
 	public Cell() {
 		this("");
 	}
 	@JsonCreator
 	public Cell(@JsonProperty("text") String stext) {
-        icon=new JLabel();
+		this(stext,null);
+	}
+	public Cell(Latex l) {
+		this("",l);
+	}
+	public Cell(@JsonProperty("text") String stext, Latex latex) {
+		this.latex = latex;
+		//environment = e;
+        //icon = new JLabel();
         text = new JTextArea(stext,5,50);
         text.addKeyListener((new KeyListener() {
 
@@ -53,14 +79,6 @@ public class Cell{
         queueUpdate();
 	}
 	
-	public String getEnv() {
-		return env;
-	}
-	
-	public void setEnv(String set) {
-		this.env = set;
-	}
-	
 	public String getText() {
 		return text.getText();
 	}
@@ -72,21 +90,29 @@ public class Cell{
 	public String toLatex() {
 		return toLatex(false,false);
 	}
+	private int getEnvIndex(String env) {
+		for (int i = 0 ; i  < envs.length; ++i) {
+			if(envs[i].equals(env))
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
 	public String toLatex(boolean stared, boolean math) {
 		if(getText().trim().equals(""))return"";
 		
 		String ret = "";
-		if(!env.equals("latex")) {
-		if(math) ret += "$";
-		else ret +="\\begin{"+env + (stared?"*":"") +"}\n" ;}
+		ret += begin[getEnvIndex(environment)] + "\n";
 		ret +=getText() ;
-		if(!env.equals("latex")) {
-		if(math) ret += "$";
-		else ret +="\n\\end{"+env+(stared?"*":"") +"}";}
+		ret += end[getEnvIndex(environment)] + "\n";
+		if(math) {
+			ret = ret.replaceAll(Pattern.quote(Latex.begin("equation")), "\\$");
+			ret = ret.replaceAll(Pattern.quote(Latex.end("equation")), "\\$");
+		}
 		return ret;
 	}
 	
-	private boolean updating=false,reupdate = false;
 	
 	public void queueUpdate()
 	{
@@ -103,10 +129,14 @@ public class Cell{
 	}
 	
 	public void update() {
-		BufferedImage img= Latex.snipImage(toLatex(true,true));
-		if ( img != null) {
-        ImageIcon icon2=new ImageIcon(img);
-        icon.setIcon(icon2);
+		if(latex!=null) {
+			BufferedImage img= latex.snipImage(toLatex(true,true));
+			if ( img != null) {
+		        //icon = new JLabel();
+		        ImageIcon icon2=new ImageIcon(img);
+		        icon.setIcon(icon2);
+				
+			}
 		}
         synchronized(this) {
         	updating = false;

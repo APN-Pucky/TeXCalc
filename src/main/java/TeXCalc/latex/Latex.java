@@ -13,11 +13,20 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.Files;
 
 import TeXCalc.util.Task;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class Latex {
+	public static Latex _default = new Latex();
+	public static boolean PRINT = false;
 	public static String TEXENGINE = "lualatex";
 	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert]{standalone}\n";
 	public static String TYPE_DOCUMENT = "\\documentclass{article}\n";
@@ -32,8 +41,21 @@ public class Latex {
 			"\\begin{document}\n";
 	public static String FRAMEEND = "\\end{document}\n";
 	
+	private String top;
+	private String end;
 	
-	public static File toPdf(String latex) {
+	public Latex() {
+		top = FRAMETOP;
+		end = FRAMEEND;
+	}
+
+	@JsonCreator
+	public Latex(@JsonProperty("top") String top,@JsonProperty("end") String end) {
+		this.top = top;
+		this.end = end;
+	}
+	
+	public File toPdf(String latex) {
 		String uuid = UUID.randomUUID().toString();
 		String TEMP_DIRECTORY = ".tmp" + File.separator + uuid;
 		String TEMP_TEX_FILE_NAME = uuid; // for New22.tex
@@ -64,10 +86,12 @@ public class Latex {
 		try {
 			long startTime = System.nanoTime();
 			Process p = pb.start();
-			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), true);
-			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), true);
-			Task.startUntracked(fluxSortie);
-			Task.startUntracked(fluxErreur);
+			if(PRINT) {
+				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), true);
+				StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), true);
+				Task.startUntracked(fluxSortie);
+				Task.startUntracked(fluxErreur);
+			}
 			p.waitFor();
 			long stopTime = System.nanoTime();
 			System.out.println((stopTime - startTime) / 1.e9 + " s");
@@ -95,7 +119,7 @@ public class Latex {
 		return ret_file;
 	}
 	
-	public static BufferedImage pdfToImage(File pdf_file) {
+	public BufferedImage pdfToImage(File pdf_file) {
 		File f = pdf_file;
 		if(f==null) return null;
 		ProcessBuilder pb = new ProcessBuilder("pdftoppm",  "-png",
@@ -104,10 +128,12 @@ public class Latex {
 		try {
 			Process p = pb.start();
 			bi = ImageIO.read(p.getInputStream());
+			if(PRINT) {
 			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), true);
 			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), true);
 			Task.startUntracked(fluxSortie);
 			Task.startUntracked(fluxErreur);
+			}
 			p.waitFor();
 			
 		} catch (InterruptedException | IOException e1) {
@@ -117,7 +143,7 @@ public class Latex {
 		return bi;
 	}
 	
-	public static BufferedImage toImage(String latex) {
+	public BufferedImage toImage(String latex) {
 
 		String math = latex;
 		File f = toPdf(math);
@@ -128,27 +154,34 @@ public class Latex {
 	}
 	
 
-	public static BufferedImage snipImage(String latex) {
+	public BufferedImage snipImage(String latex) {
 		String newLineWithSeparation = System.getProperty("line.separator") + System.getProperty("line.separator");
 		String math = TYPE_STANDALONE;
-		math +=FRAMETOP;
+		math +=top;
 		math += latex + newLineWithSeparation;
-		math += FRAMEEND;
+		math += end;
 		return toImage(math);
 	}
 
 
-	public static BufferedImage snipMathImage(String math) {
+	public BufferedImage snipMathImage(String math) {
 		return snipImage("$" + math + "$");
 	}
 	
 
-	private static void cleanUp(String TEMP_DIRECTORY, String TEMP_TEX_FILE_NAME) {
+	private void cleanUp(String TEMP_DIRECTORY, String TEMP_TEX_FILE_NAME) {
 		// 5. Delete files
 		for (File file : (new File(TEMP_DIRECTORY + File.separator + "tex").listFiles())) {
 			if (file.getName().startsWith(TEMP_TEX_FILE_NAME + ".")) {
 				//file.delete();
 			}
 		}
+	}
+	
+	public static String begin(String env) {
+		return "\\begin{" + env + "}";
+	}
+	public static String end(String env) {
+		return "\\end{" + env + "}";
 	}
 }

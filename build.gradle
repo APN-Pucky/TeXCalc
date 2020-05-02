@@ -10,12 +10,19 @@ plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
 }
+plugins {
+  id "io.freefair.lombok" version "5.0.1"
+}
 
+plugins {
+    id 'com.palantir.git-version' version '0.12.3'
+}
 repositories {
     // Use jcenter for resolving dependencies.
     // You can declare any Maven/Ivy/file repository here.
     jcenter()
 }
+
 
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
@@ -30,12 +37,13 @@ dependencies {
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0.rc1'
     
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0.rc1'
+    compile group: 'commons-io', name: 'commons-io', version: '2.5'
 }
 
 task fatJar(type: Jar) {
 	manifest {
         attributes 'Implementation-Title': project.name,
-        	'Implementation-Version': '0.0',
+        	'Implementation-Version': versionDetails().lastTag,
         	'Main-Class': 'TeXCalc.debug.DebugMain'
     }
     baseName = project.name + '-all'
