@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import TeXCalc.latex.Latex;
+
 public class CellList extends JPanel
 {
 	@JsonValue
@@ -138,16 +140,13 @@ public class CellList extends JPanel
 	
 	public String toLaTeX()
 	{
-		String ret = "\\documentclass{article}\n";
-		ret+= "\\usepackage{amsfonts}\n";
-		ret += "\\usepackage{amsmath}\n" ;
-		ret += "\\usepackage{amsthm}\n";
-		ret += "\\setlength{\\parindent}{0in}";
-		ret += "\\begin{document}\n";
+		String ret = Latex.TYPE_DOCUMENT;
+		ret+= Latex.FRAMETOP;
 		for(Cell c : cells)
 		{
 			ret += c.toLatex() + "\n";
 		}
-		return ret + "\\end{document}";
+		ret+= Latex.FRAMEEND;
+		return ret;
 	}
 }

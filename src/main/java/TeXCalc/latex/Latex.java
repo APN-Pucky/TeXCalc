@@ -18,6 +18,20 @@ import com.google.common.io.Files;
 import TeXCalc.util.Task;
 
 public class Latex {
+	public static String TEXENGINE = "lualatex";
+	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert]{standalone}\n";
+	public static String TYPE_DOCUMENT = "\\documentclass{article}\n";
+	public static String FRAMETOP =
+			"\\usepackage{amsfonts}\n"+
+			"\\usepackage{amsmath}\n" +
+			"\\usepackage{amsthm}\n"+
+			"\\usepackage{slashed}"+
+			"\\usepackage[compat=1.1.0]{tikz-feynman}\n" +
+			"\\DeclareMathOperator{\\Tr}{Tr}"+
+			"\\setlength\\parindent{0pt}"+
+			"\\begin{document}\n";
+	public static String FRAMEEND = "\\end{document}\n";
+	
 	
 	public static File toPdf(String latex) {
 		String uuid = UUID.randomUUID().toString();
@@ -44,7 +58,7 @@ public class Latex {
 			ex.printStackTrace();
 		}
 		System.out.print("  3. Execute LaTeX {" + uuid + "} from command line  to generate picture = ");
-		ProcessBuilder pb = new ProcessBuilder("pdflatex",  "-halt-on-error",
+		ProcessBuilder pb = new ProcessBuilder(TEXENGINE,  "-halt-on-error",
 				TEMP_TEX_FILE_NAME + ".tex");
 		pb.directory(new File(TEMP_DIRECTORY + File.separator + "tex"));
 		try {
@@ -116,15 +130,10 @@ public class Latex {
 
 	public static BufferedImage snipImage(String latex) {
 		String newLineWithSeparation = System.getProperty("line.separator") + System.getProperty("line.separator");
-
-		String math = "";
-		math += "\\documentclass[preview,crop,border=1pt,convert]{standalone}" + newLineWithSeparation;
-		math += "\\usepackage{amsfonts}" + newLineWithSeparation;
-		math += "\\usepackage{amsmath}" + newLineWithSeparation;
-		math += "\\usepackage{amsthm}"+ newLineWithSeparation;
-		math += "\\begin{document}" + newLineWithSeparation;
+		String math = TYPE_STANDALONE;
+		math +=FRAMETOP;
 		math += latex + newLineWithSeparation;
-		math += "\\end{document}";
+		math += FRAMEEND;
 		return toImage(math);
 	}
 

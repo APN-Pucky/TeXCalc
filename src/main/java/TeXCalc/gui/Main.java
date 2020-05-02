@@ -14,6 +14,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 
@@ -25,6 +26,7 @@ import TeXCalc.latex.Latex;
 public class Main extends JFrame {
 	CellList cl = null;
 	JScrollPane jsp = null;
+	JTextField savename;
 	public Main() {
 		
 		this.setLayout(new BorderLayout());
@@ -50,7 +52,11 @@ public class Main extends JFrame {
 
 	protected void addButtons(JToolBar toolBar) {
 		JButton button = null;
-
+		
+		savename = GUI.textEdit("save.json");
+		
+		toolBar.add(savename);
+		
 		button = GUI.buttonSync("Save", () -> save());
 		toolBar.add(button);
 		
@@ -66,7 +72,7 @@ public class Main extends JFrame {
 
 		button = GUI.buttonAsync("Add Cell", () -> addCell());
 		toolBar.add(button);
-		
+		// TODO Settings
 	}
 	
 	public void export() {
@@ -109,7 +115,7 @@ public class Main extends JFrame {
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		try {
-			objectMapper.writeValue(new File("save.json"),cl);
+			objectMapper.writeValue(new File(savename.getText()),cl);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
