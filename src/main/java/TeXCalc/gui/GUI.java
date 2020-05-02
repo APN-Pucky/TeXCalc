@@ -44,6 +44,7 @@ public class GUI {
 	    ex.printStackTrace();
 	}
 	}*/
+	
 
 	public static boolean confirm(Component c ,String msg,String title) {
 		int n = JOptionPane.showConfirmDialog(c,

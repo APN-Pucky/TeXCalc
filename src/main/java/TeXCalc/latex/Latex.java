@@ -1,7 +1,6 @@
 // src: https://tex.stackexchange.com/a/167133
 package TeXCalc.latex;
 
-import java.awt.FlowLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileWriter;
@@ -9,25 +8,23 @@ import java.io.IOException;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
+import javax.swing.BoxLayout;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.Files;
 
+import TeXCalc.gui.GUI;
 import TeXCalc.util.Task;
-import lombok.Getter;
-import lombok.Setter;
 
-@Getter
-@Setter
+
 public class Latex {
 	public static Latex _default = new Latex();
 	public static boolean PRINT = false;
-	public static String TEXENGINE = "lualatex";
+	//public static String TEXENGINE = "lualatex";
 	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert]{standalone}\n";
 	public static String TYPE_DOCUMENT = "\\documentclass{article}\n";
 	public static String FRAMETOP =
@@ -41,19 +38,48 @@ public class Latex {
 			"\\begin{document}\n";
 	public static String FRAMEEND = "\\end{document}\n";
 	
-	private String top;
-	private String end;
+	private JTextArea engine ;
+	private JTextArea standaloneType ;
+	private JTextArea documentType;
+	private JTextArea top;
+	private JTextArea end;
+	
+	public String getTop() { return top.getText();}
+	public String getEnd() { return end.getText();}
+	public String getStandaloneType() { return standaloneType.getText();}
+	public String getDocumentType() { return documentType.getText();}
+	public String getEngine() { return engine.getText();}
+	
+	public void setTop(String a) { top.setText(a);}
+	public void setEnd(String a) { end.setText(a);}
+	public void setStandaloneType(String a) { standaloneType.setText(a);}
+	public void setDocumentType(String a) {  documentType.setText(a);}
+	public void setEngine(String a) { engine.setText(a);}
+
+	@JsonIgnore
+	private JPanel panel;
 	
 	public Latex() {
-		top = FRAMETOP;
-		end = FRAMEEND;
+		this(FRAMETOP, FRAMEEND);
 	}
 
 	@JsonCreator
 	public Latex(@JsonProperty("top") String top,@JsonProperty("end") String end) {
-		this.top = top;
-		this.end = end;
+		panel = new JPanel();
+		
+		this.top = GUI.area(top);
+		this.end = GUI.area(end);
+		engine = GUI.area("lualatex");
+		standaloneType = GUI.area(TYPE_STANDALONE);
+		documentType = GUI.area(TYPE_DOCUMENT);
+		panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
+		panel.add(engine);
+		panel.add(standaloneType);
+		panel.add(documentType);
+		panel.add(this.top);
+		panel.add(this.end);
 	}
+	
 	
 	public File toPdf(String latex) {
 		String uuid = UUID.randomUUID().toString();
@@ -80,7 +106,7 @@ public class Latex {
 			ex.printStackTrace();
 		}
 		System.out.print("  3. Execute LaTeX {" + uuid + "} from command line  to generate picture = ");
-		ProcessBuilder pb = new ProcessBuilder(TEXENGINE,  "-halt-on-error",
+		ProcessBuilder pb = new ProcessBuilder(getEngine(),  "-halt-on-error",
 				TEMP_TEX_FILE_NAME + ".tex");
 		pb.directory(new File(TEMP_DIRECTORY + File.separator + "tex"));
 		try {
@@ -156,7 +182,7 @@ public class Latex {
 
 	public BufferedImage snipImage(String latex) {
 		String newLineWithSeparation = System.getProperty("line.separator") + System.getProperty("line.separator");
-		String math = TYPE_STANDALONE;
+		String math = getStandaloneType();
 		math +=top;
 		math += latex + newLineWithSeparation;
 		math += end;
@@ -176,6 +202,11 @@ public class Latex {
 				//file.delete();
 			}
 		}
+	}
+	
+	public JPanel getPanel()
+	{
+		return panel;
 	}
 	
 	public static String begin(String env) {

@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
@@ -37,12 +38,14 @@ import lombok.Setter;
 public class Main {
 	@Getter
 	CellList celllist= null;
+	JTabbedPane tp= null;
 	JScrollPane jsp = null;
 	JTextField savename;
 	@Getter @Setter
 	String version = "DEV";
 	JFrame jframe;
 	String tmp_save = "tmp_save.json~";
+	
 	public Main() {
 
 		version = getClass().getPackage().getImplementationVersion();
@@ -61,11 +64,13 @@ public class Main {
 		
 		jframe.add(toolBar, BorderLayout.PAGE_START);
 		celllist = new CellList(11);
-		jframe.add(jsp =new JScrollPane(celllist.getPanel()));
+		refreshTabs();
+		
 		jframe.setVisible(true);
 		jframe.pack();
 		jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		load(tmp_save);
+		
 		Task.startUntracked(() -> {
 			while(true) {
 				Task.sleep(5000);
@@ -73,11 +78,19 @@ public class Main {
 			}
 		});
 	}
+	
+	private void refreshTabs() {
+		if(tp!=null)jframe.remove(tp);
+		tp= new JTabbedPane();
+		tp.addTab("Notebook",null,jsp =new JScrollPane(celllist.getPanel()),"");
+		tp.addTab("Settings",null,jsp =new JScrollPane(celllist.getLatex().getPanel()),"");
+		jframe.add(tp);
+	}
 
 	protected void addButtons(JToolBar toolBar) {
 		JButton button = null;
 		
-		savename = GUI.textEdit("save.json");
+		savename = GUI.text("save.json",true,100);
 		
 		toolBar.add(savename);
 		
@@ -96,7 +109,12 @@ public class Main {
 
 		button = GUI.buttonAsync("Add Cell", () -> addCell());
 		toolBar.add(button);
+		
+		//button = GUI.buttonAsync("Settings", () -> celllist.getLatex().settings()); // todo top und end, changes
+		//toolBar.add(button);
 		// TODO Settings
+		//toolBar.add(GUI.text("lualatex",true,100));
+		
 	}
 	
 	public void export() {
@@ -174,8 +192,9 @@ public class Main {
 			CellList cl = objectMapper.readValue(n.get("celllist").toString(), CellList.class);
 			cl.linkAll();
 			setCelllist(cl);
-			jframe.remove(jsp);
-			jframe.add(jsp = new JScrollPane(celllist.getPanel()));
+			refreshTabs();
+			//jframe.remove(jsp);
+			//jframe.add(jsp = new JScrollPane(celllist.getPanel()));
 			jframe.pack();
 			jframe.repaint();
         } catch (IOException e) {

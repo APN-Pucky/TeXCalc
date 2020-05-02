@@ -185,7 +185,7 @@ public class CellList
 	
 	public String toLaTeX()
 	{
-		String ret = Latex.TYPE_DOCUMENT;
+		String ret = latex.getDocumentType();
 		ret+= Latex.FRAMETOP;
 		for(Cell c : cells)
 		{
