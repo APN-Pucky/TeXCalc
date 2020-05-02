@@ -7,7 +7,7 @@ on:
 name: Upload Release Asset
 
 jobs:
-  build:
+  publish:
     name: Upload Release Asset
     runs-on: ubuntu-latest
     steps:
