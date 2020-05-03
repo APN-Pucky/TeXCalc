@@ -24,6 +24,7 @@ import TeXCalc.util.Task;
 public class Latex {
 	public static Latex _default = new Latex();
 	public static boolean PRINT = false;
+	public static boolean TIME = false;
 	//public static String TEXENGINE = "lualatex";
 	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert]{standalone}\n";
 	public static String TYPE_DOCUMENT = "\\documentclass{article}\n";
@@ -120,7 +121,7 @@ public class Latex {
 			}
 			p.waitFor();
 			long stopTime = System.nanoTime();
-			System.out.println((stopTime - startTime) / 1.e9 + " s");
+			if(TIME)System.out.println((stopTime - startTime) / 1.e9 + " s");
 		} catch (IOException | InterruptedException ex) {
 			ex.printStackTrace();
 		}
@@ -183,9 +184,9 @@ public class Latex {
 	public BufferedImage snipImage(String latex) {
 		String newLineWithSeparation = System.getProperty("line.separator") + System.getProperty("line.separator");
 		String math = getStandaloneType();
-		math +=top;
+		math += getTop();
 		math += latex + newLineWithSeparation;
-		math += end;
+		math += getEnd();
 		return toImage(math);
 	}
 

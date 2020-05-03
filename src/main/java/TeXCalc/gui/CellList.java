@@ -124,7 +124,7 @@ public class CellList
 		c.weighty = 0.1;
 		c.gridx = 2;
 		c.gridy = index;
-		GUI.log.m(cell.getText()+ (cell.getLatex()==null));
+		//GUI.log.m(cell.getText()+ (cell.getLatex()==null));
 		panel.add(cell.icon, c);
 		
 	}

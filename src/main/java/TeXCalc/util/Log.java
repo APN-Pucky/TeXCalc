@@ -47,11 +47,19 @@ public class Log
         
 	}
 	
+	public static int getLineNumber() {
+	    return Thread.currentThread().getStackTrace()[5].getLineNumber();
+	}
+	
+	public static String getClassName() {
+	    return Thread.currentThread().getStackTrace()[5].getClassName();
+	}
+	
 	
 	
 	public void print(String msg, Level l,String[] src)
 	{
-		String date = "[" + new SimpleDateFormat("HH:mm:ss").format( new Date() ) + "]: ";
+		String date = "[" + new SimpleDateFormat("HH:mm:ss").format( new Date() ) + "] " + getClassName() + ":" + getLineNumber() + ": ";
 		Style s = null;//hm_style.get(l);
 		String src_string = "";
 		for(String st : src)src_string += st + ","; 
