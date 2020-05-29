@@ -9,11 +9,14 @@ public class Wrapper {
 	String begin = "";
 	@Getter @Setter
 	String end = "";
-public String toStandalone(String s) {
-	return s;
-}
-public String toDocument(String s) {
-	if(s.trim().equals(""))return"";
-	return getBegin() +  "\n" + s +   "\n" + getEnd() + "\n";
-}
+	public String to(String s) {
+		return s;
+	}
+	public String toStandalone(String s) {
+		return to(s);
+	}
+	public String toDocument(String s) {
+		if(s.trim().equals(""))return"";
+		return getBegin() +  "\n" + to(s) +   "\n" + getEnd() + "\n";
+	}
 }

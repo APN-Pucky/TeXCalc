@@ -16,7 +16,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import TeXCalc.config.Default;
 import TeXCalc.latex.Latex;
-import TeXCalc.latex.wrap.Aligned;
+import TeXCalc.latex.wrap.Align;
+import TeXCalc.latex.wrap.DiffAlign;
 import TeXCalc.latex.wrap.Equation;
 import TeXCalc.latex.wrap.Section;
 import TeXCalc.latex.wrap.SubSection;
@@ -30,7 +31,8 @@ public class Cell{
 	//public static final String[] envs = { "equation", "latex", "aligned", ""};
 	public static HashMap<String,Wrapper> hm = new HashMap<String,Wrapper>();
 	static {
-		hm.put("aligned",new Aligned());
+		hm.put("aligned",new Align());
+		hm.put("diffalign",new DiffAlign());
 		hm.put("equation",new Equation());
 		hm.put("latex",new Wrapper());
 		hm.put("section",new Section());

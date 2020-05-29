@@ -2,8 +2,8 @@ package TeXCalc.latex.wrap;
 
 import TeXCalc.latex.Latex;
 
-public class Aligned extends Wrapper {
-	public Aligned() {
+public class Align extends Wrapper {
+	public Align() {
 		super();
 		//setBegin(getBegin()+Latex.begin("aligned"));
 		//setEnd(Latex.end("aligned")+getEnd());
@@ -11,7 +11,7 @@ public class Aligned extends Wrapper {
 	public String toStandalone(String s) {
 		String ret = "";
 		ret +="$"+Latex.begin("aligned");
-		ret += s;
+		ret += to(s);
 		ret +=Latex.end("aligned") + "$";
 		return (ret);
 		
@@ -19,7 +19,7 @@ public class Aligned extends Wrapper {
 	public String toDocument(String s) {
 		String ret = "";
 		ret +=Latex.begin("align");
-		ret += s;
+		ret += to(s);
 		ret +=Latex.end("align");
 		return ret;	
 	}
