@@ -53,8 +53,8 @@ public class CellList
 			"\\usepackage{amsthm}\n"+
 			"\\usepackage{slashed}"+
 			"\\usepackage[compat=1.1.0]{tikz-feynman}\n" +
-			"\\DeclareMathOperator{\\Tr}{Tr}"+
-			"\\setlength\\parindent{0pt}"+
+			"\\DeclareMathOperator{\\Tr}{Tr}\n"+
+			"\\setlength\\parindent{0pt}\n"+
 			"\\begin{document}\n";
 	@JsonIgnore
 	public String FRAMEEND = "\\end{document}\n";
@@ -101,26 +101,27 @@ public class CellList
 		cell.setLatex(latex);
 		
 		JToolBar tools = new JToolBar(JToolBar.VERTICAL);
+		tools.setFloatable(false);
 		addButtons(tools,cell);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.1;
+		c.fill = GridBagConstraints.NONE;
+		c.weightx = 0.01;
 		c.weighty = 0.1;
 		c.gridx = 0;
 		c.gridy = index;
 		panel.add(tools, c);
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.5;
+		c.fill = GridBagConstraints.NONE;
+		c.weightx = 0.3;
 		c.weighty = 0.1;
 		c.gridx = 1;
 		c.gridy = index;
 		panel.add(cell.text, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.5;
+		c.weightx = 0.7;
 		c.weighty = 0.1;
 		c.gridx = 2;
 		c.gridy = index;
@@ -128,7 +129,20 @@ public class CellList
 		panel.add(cell.icon, c);
 		
 	}
-	
+	protected void unlinkAll() {
+		for(int i =0; i  < this.cells.size();++i)
+		{
+			unlink(i);
+		}
+	}
+	protected void rmAll() {
+		if(GUI.confirm(panel,"RM All","RM All")) {
+			unlinkAll();
+			cells.clear();
+			panel.revalidate();
+			panel.repaint();
+		}
+	}
 	protected void addButtons(JToolBar toolBar,Cell c) {
 		JButton button = null;
 
@@ -138,7 +152,7 @@ public class CellList
 		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){unlink(c);cells.remove(c);panel.revalidate();panel.repaint();}});
 		toolBar.add(button);
 		
-		JComboBox<String> petList = new JComboBox<String>(Cell.envs);
+		JComboBox<String> petList = new JComboBox<String>(Cell.hm.keySet().toArray(new String[Cell.hm.keySet().size()]));
 		toolBar.add(petList);
 		
 		petList.setSelectedItem(c.getEnvironment());	
@@ -186,12 +200,12 @@ public class CellList
 	public String toLaTeX()
 	{
 		String ret = latex.getDocumentType();
-		ret+= Latex.FRAMETOP;
+		ret+= latex.getTop();
 		for(Cell c : cells)
 		{
 			ret += c.toLatex() + "\n";
 		}
-		ret+= Latex.FRAMEEND;
+		ret+= latex.getEnd();
 		return ret;
 	}
 }

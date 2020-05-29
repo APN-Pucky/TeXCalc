@@ -1,44 +1,48 @@
 package TeXCalc.gui;
 
-import java.awt.Container;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.util.regex.Pattern;
+import java.util.HashMap;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
-import javax.swing.JToolBar;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import TeXCalc.debug.DebugFrame;
+import TeXCalc.config.Default;
 import TeXCalc.latex.Latex;
-import TeXCalc.util.Log;
+import TeXCalc.latex.wrap.Aligned;
+import TeXCalc.latex.wrap.Equation;
+import TeXCalc.latex.wrap.Section;
+import TeXCalc.latex.wrap.SubSection;
+import TeXCalc.latex.wrap.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Cell{
 	
-	public static final String[] envs = { "equation", "latex", "aligned", ""};
-	public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
-	public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
+	//public static final String[] envs = { "equation", "latex", "aligned", ""};
+	public static HashMap<String,Wrapper> hm = new HashMap<String,Wrapper>();
+	static {
+		hm.put("aligned",new Aligned());
+		hm.put("equation",new Equation());
+		hm.put("latex",new Wrapper());
+		hm.put("section",new Section());
+		hm.put("subsection",new SubSection());
+	}
+	//public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
+	//public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
 	
 	protected JTextArea text;
 	protected JLabel icon = new JLabel();
 	@Getter @Setter
-	protected String environment = "equation";
+	protected String environment = Default.environment;
 	
 	@Getter @Setter @JsonIgnore
 	protected Latex latex;
@@ -60,7 +64,8 @@ public class Cell{
 		this.latex = latex;
 		//environment = e;
         //icon = new JLabel();
-        text = new JTextArea(stext,5,50);
+        text = new JTextArea(stext,5,80);
+        text.setLineWrap(true);
         text.addKeyListener((new KeyListener() {
 
             @Override
@@ -90,6 +95,7 @@ public class Cell{
 	public String toLatex() {
 		return toLatex(false,false);
 	}
+	/*
 	private int getEnvIndex(String env) {
 		for (int i = 0 ; i  < envs.length; ++i) {
 			if(envs[i].equals(env))
@@ -99,9 +105,17 @@ public class Cell{
 		}
 		return -1;
 	}
+	*/
 	public String toLatex(boolean stared, boolean math) {
 		if(getText().trim().equals(""))return"";
-		
+		if(math) {
+			return hm.get(environment).toStandalone(getText());
+		}
+		else
+		{
+			return hm.get(environment).toDocument(getText());
+		}
+		/*
 		String ret = "";
 		ret += begin[getEnvIndex(environment)] + "\n";
 		ret +=getText() ;
@@ -111,6 +125,7 @@ public class Cell{
 			ret = ret.replaceAll(Pattern.quote(Latex.end("equation")), "\\$");
 		}
 		return ret;
+		*/
 	}
 	
 	

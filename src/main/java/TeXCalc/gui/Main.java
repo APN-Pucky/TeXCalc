@@ -50,7 +50,7 @@ public class Main {
 
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
-		jframe = new JFrame("TeXCalc-"+version);
+		jframe = new JFrame("TeXCalc");
 		jframe.setLayout(new BorderLayout());
 
 		JMenuBar menubar = new JMenuBar();
@@ -102,7 +102,9 @@ public class Main {
 
 		button = GUI.buttonAsync("Load", () -> load());
 		toolBar.add(button);
-		
+
+		button = GUI.buttonAsync("Remove All", () -> celllist.rmAll());
+		toolBar.add(button);
 
 		button = GUI.buttonAsync("Refresh", () -> update());
 		toolBar.add(button);
@@ -132,25 +134,28 @@ public class Main {
 		File f = celllist.getLatex().toPdf(tex);
 		try {
 			if(f != null && f.exists())
+			{
 				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export.pdf"));
+				try {
+					ImageIO.write(celllist.getLatex().pdfToImage(new File(System.getProperty("user.dir") + File.separator + "export.pdf")), "png", new File(System.getProperty("user.dir") + File.separator + "export.png"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated #catch block
 			e.printStackTrace();
 		}
 		
-		try {
-			ImageIO.write(celllist.getLatex().pdfToImage(new File(System.getProperty("user.dir") + File.separator + "export.pdf")), "png", new File(System.getProperty("user.dir") + File.separator + "export.png"));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 		
 	}
 	
 	public void addCell() {
 		celllist.increase();
-		jframe.pack();
-		jframe.repaint();
+		//jframe.pack();
+		//jframe.repaint();
 	}
 
 	public void save() {
@@ -217,7 +222,8 @@ public class Main {
 
 	public void update() {
 		celllist.update();
-		//jframe.pack();
-		//jframe.repaint();
+		jframe.validate();
+		jframe.pack();
+		jframe.repaint();
 	}
 }
