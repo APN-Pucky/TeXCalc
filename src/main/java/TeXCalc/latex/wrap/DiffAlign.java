@@ -1,5 +1,6 @@
 package TeXCalc.latex.wrap;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
@@ -8,7 +9,7 @@ import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Operation;
 
 public class DiffAlign extends Align
 {
-	public String to(String s) {
+	public String too(String s) {
 		String ret = "";
 
 		String[] lines = s.replaceAll("\n", "").replaceAll("\r", "").split("\\\\\\\\");
@@ -59,5 +60,79 @@ public class DiffAlign extends Align
 			  ret += "\\\\"+System.lineSeparator();
 			}
 		return ret;
+		}
+	public String to(String s) {
+		StringBuilder ret = new StringBuilder("");
+		StringBuilder ret2 = new StringBuilder("");
+
+		String[] lines = s.replaceAll("\n", "").replaceAll("\r", "").split("\\\\\\\\");
+		ret.append( lines[0] + "\\\\");
+		ArrayList<LinkedList<Diff>> diffss = new ArrayList<LinkedList<Diff>>(lines.length-1);
+		DiffMatchPatch dmp = new DiffMatchPatch();
+		for(int i = 0; i < lines.length-1;++i) {
+			LinkedList<Diff> diffs =dmp .diffMain(lines[i],lines[i+1]);
+			dmp.diffCleanupSemantic(diffs);
+			diffss.add(diffs);
+		}
+		for(int i = 0 ; i  < lines.length-1;++i) {
+			System.out.println("'" +lines[i] + "' vs '" + lines[i+1] + "'");
+			 for (Diff diff : diffss.get(i)) {
+			    if (diff.operation == Operation.EQUAL) {
+			    	System.out.println("EQ" + diff.text);
+		    		if(ret.length()>0 && (ret.charAt(ret.length()-1)=='^' || ret.charAt(ret.length()-1)=='_' ))
+		    		{
+		    			String ts = ret.substring(ret.length()-1,ret.length());
+	    				ret = ret.deleteCharAt(ret.length()-1);
+	    				ret.append( "😂" + ts+diff.text);
+		    		}
+		    		else {
+			    		ret.append( "😂" + diff.text);
+		    		}
+			    }
+			    if (diff.operation == Operation.INSERT) {
+			    		if(ret.length()>0 && (ret.charAt(ret.length()-1)=='^' || ret.charAt(ret.length()-1)=='_' ))
+			    		{
+			    			String ts = ret.substring(ret.length()-1,ret.length());
+			    			ret = ret.deleteCharAt(ret.length()-1);
+			    			ret.append(	"😊" + ts+diff.text);
+			    		}
+			    		else {
+			    			ret.append("😊" + diff.text);
+			    		}
+			    }
+			  }
+			  if(i!= lines.length-2)ret .append("\\\\"+System.lineSeparator());
+		}
+		String[] lines2 = ret.toString().replaceAll("\n", "").replaceAll("\r", "").split("\\\\\\\\");
+		for(int i = 0 ; i  < lines2.length-1;++i) {
+			LinkedList<Diff> diffs = dmp.diffMain(lines2[i],lines[i+1]);
+			//dmp.diffCleanupSemantic(diffs);
+			System.out.println("V2: "+ lines2[i] + " vs " + lines[i+1]);
+		    ret2.append("\\foreach{\\col}{}{");
+		    for (Diff diff : diffs) {
+			    if (diff.operation == Operation.EQUAL) {
+			    	ret2.append(diff.text + ",");
+			    }
+			    
+			    if(diff.operation == Operation.DELETE) {
+			    	System.out.println("RM2 _"  + diff.text);
+			    	if(ret2.length()>0 && (ret2.charAt(ret2.length()-1)=='^' || ret2.charAt(ret2.length()-1)=='_' ))
+			    	{
+			    		String ts = ret2.substring(ret2.length()-1,ret2.length());
+			    		ret2 = ret2.deleteCharAt(ret2.length()-1);
+			    		ret2.append( "\\colorlet{what}{red}" + ts+diff.text + ",");
+			    	}
+			    	else {
+			    		ret2.append("\\colorlet{what}{red}" + diff.text + ",");
+			    	}
+			    }
+		    }
+		    ret2.append("}");
+			ret2.append("\\\\"+System.lineSeparator());
+		}
+		ret2.append(lines[lines.length-1]);
+		//return ret.toString();
+		return ret2.toString().replaceAll("😂", "\\\\color{black}").replaceAll( 
+				"😊", "\\\\color{green}");
 		}
 	}

@@ -8,5 +8,6 @@ bin/
 .tmp
 *.json
 export.*
+test.*
 
 *~
