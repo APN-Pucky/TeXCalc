@@ -1,17 +1,9 @@
 package external;
 
-	import java.awt.BorderLayout;
-	import java.awt.Color;
-	import java.awt.Dimension;
-
 	import javax.swing.JFrame;
-	import javax.swing.JPanel;
-
-	import net.eleritec.docking.DockingManager;
-	import net.eleritec.docking.DockingPort;
-	import net.eleritec.docking.defaults.DefaultDockingPort;
 
 	public class SimpleDemo extends JFrame {
+		/*
 	  public static void main(String[] args) {
 	    JFrame f = new SimpleDemo();
 	    f.setSize(600, 400);
@@ -54,5 +46,6 @@ package external;
 	    port.setPreferredSize(new Dimension(100, 100));
 	    return port;
 	  }
+	  */
 	}
 
