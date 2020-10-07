@@ -18,8 +18,10 @@ import TeXCalc.config.Default;
 import TeXCalc.latex.Latex;
 import TeXCalc.latex.wrap.Align;
 import TeXCalc.latex.wrap.DiffAlign;
+import TeXCalc.latex.wrap.DiffAlign2;
 import TeXCalc.latex.wrap.Equation;
 import TeXCalc.latex.wrap.Section;
+import TeXCalc.latex.wrap.SimpleDiffAlign;
 import TeXCalc.latex.wrap.SubSection;
 import TeXCalc.latex.wrap.Wrapper;
 import lombok.Getter;
@@ -33,6 +35,8 @@ public class Cell{
 	static {
 		hm.put("aligned",new Align());
 		hm.put("diffalign",new DiffAlign());
+		hm.put("diffalign2",new DiffAlign2());
+		hm.put("simplediffalign",new SimpleDiffAlign());
 		hm.put("equation",new Equation());
 		hm.put("latex",new Wrapper());
 		hm.put("section",new Section());

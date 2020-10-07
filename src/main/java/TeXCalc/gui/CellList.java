@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -38,7 +39,7 @@ public class CellList
 	@JsonSerialize(as=ArrayList.class, contentAs=Cell.class)
 	public ArrayList<Cell> cells = new ArrayList<Cell>();
 	@JsonIgnore
-	private HashMap<Cell,JToolBar> barmap= new HashMap<Cell,JToolBar>();
+	private HashMap<Cell,JPanel> barmap= new HashMap<Cell,JPanel>();
 
 	//@JsonValue
 	//@JsonSerialize
@@ -100,7 +101,7 @@ public class CellList
 		Cell cell = cells.get(index);
 		cell.setLatex(latex);
 		
-		JToolBar tools = new JToolBar(JToolBar.VERTICAL);
+		JToolBar tools = new JToolBar(JToolBar.HORIZONTAL);
 		tools.setFloatable(false);
 		addButtons(tools,cell);
 		
@@ -111,14 +112,18 @@ public class CellList
 		c.weighty = 0.1;
 		c.gridx = 0;
 		c.gridy = index;
-		panel.add(tools, c);
+		//panel.add(tools, c);
 		
+		JPanel tmpp = new JPanel();
+		tmpp.setLayout(new BoxLayout(tmpp, BoxLayout.Y_AXIS));
+		tmpp.add(tools);
+		tmpp.add(cell.text);
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.3;
 		c.weighty = 0.1;
 		c.gridx = 1;
 		c.gridy = index;
-		panel.add(cell.text, c);
+		panel.add(tmpp, c);
 		
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.weightx = 0.7;
@@ -127,6 +132,7 @@ public class CellList
 		c.gridy = index;
 		//GUI.log.m(cell.getText()+ (cell.getLatex()==null));
 		panel.add(cell.icon, c);
+		barmap.put(cell, tmpp);	
 		
 	}
 	protected void unlinkAll() {
@@ -134,6 +140,10 @@ public class CellList
 		{
 			unlink(i);
 		}
+	}
+	protected void re() {
+		panel.revalidate();
+		panel.repaint();
 	}
 	protected void rmAll() {
 		if(GUI.confirm(panel,"RM All","RM All")) {
@@ -143,17 +153,31 @@ public class CellList
 			panel.repaint();
 		}
 	}
+	protected void up(Cell c) {
+		int i = cells.indexOf(c);
+		if(i==0) return;
+		Cell tmp = cells.get(i-1);
+		cells.set(i-1, c);
+		cells.set(i, tmp);
+		linkAll();
+		re();
+	}
+	protected void down(Cell c) {
+		int i = cells.indexOf(c);
+		if(i==cells.size()-1) return;
+		Cell tmp = cells.get(i+1);
+		cells.set(i+1, c);
+		cells.set(i, tmp);
+		linkAll();
+		re();
+	}
 	protected void addButtons(JToolBar toolBar,Cell c) {
 		JButton button = null;
+		JPanel toolBarp = new JPanel();
 
-		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){c.setText(""); c.queueUpdate();}});
-		toolBar.add(button);
-		
-		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){unlink(c);cells.remove(c);panel.revalidate();panel.repaint();}});
-		toolBar.add(button);
 		
 		JComboBox<String> petList = new JComboBox<String>(Cell.hm.keySet().toArray(new String[Cell.hm.keySet().size()]));
-		toolBar.add(petList);
+		toolBarp.add(petList);
 		
 		petList.setSelectedItem(c.getEnvironment());	
 		
@@ -167,8 +191,21 @@ public class CellList
 			       }
 			    }   
 		});
+		//toolBar.add(toolBarp);
+	
+		button = GUI.buttonSync("Up", () -> up(c));
+		toolBarp.add(button);
+		button = GUI.buttonSync("Down", () -> down(c));
+		toolBarp.add(button);
+
+		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){c.setText(""); c.queueUpdate();}});
+		toolBarp.add(button);
 		
-		barmap.put(c, toolBar);	
+		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){unlink(c);cells.remove(cells.indexOf(c));panel.revalidate();panel.repaint();}});
+		toolBarp.add(button);	
+		
+		toolBar.add(toolBarp);
+
 	}
 	
 	public void unlink(Cell c) {
@@ -176,7 +213,7 @@ public class CellList
 	}
 	public void unlink(int index) {
 		Cell cell = cells.get(index);
-		panel.remove(cell.text);
+		//panel.remove(cell.text);
 		panel.remove(cell.icon);
 		if(barmap.get(cell) != null)
 			panel.remove(barmap.get(cell));
@@ -187,15 +224,16 @@ public class CellList
 	{
 		Cell c = new Cell(latex);
 		cells.add(c);
-		link(cells.size()-1);
+		//link(cells.size()-1);
+		linkAll();
 	}
 	
-	public void decrease()
+	/*public void decrease()
 	{
 		Cell c = cells.get(cells.size()-1);
 		unlink(cells.size()-1);
 		cells.remove(c);
-	}
+	}*/
 	
 	public String toLaTeX()
 	{

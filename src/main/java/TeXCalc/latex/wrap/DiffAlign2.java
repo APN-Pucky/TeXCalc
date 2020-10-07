@@ -7,7 +7,7 @@ import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Operation;
 
-public class DiffAlign extends Align
+public class DiffAlign2 extends Align
 {
 	public String too(String s) {
 		String ret = "";
@@ -71,6 +71,7 @@ public class DiffAlign extends Align
 		DiffMatchPatch dmp = new DiffMatchPatch();
 		for(int i = 0; i < lines.length-1;++i) {
 			LinkedList<Diff> diffs =dmp .diffMain(lines[i],lines[i+1]);
+			//dmp.diffCleanupEfficiency(diffs);
 			dmp.diffCleanupSemantic(diffs);
 			diffss.add(diffs);
 		}
@@ -104,11 +105,13 @@ public class DiffAlign extends Align
 			  if(i!= lines.length-2)ret .append("\\\\"+System.lineSeparator());
 		}
 		String[] lines2 = ret.toString().replaceAll("\n", "").replaceAll("\r", "").split("\\\\\\\\");
-		for(int i = 0 ; i  < lines2.length-1;++i) {
+		for(int i = 0 ; i  < lines2.length-1 && lines.length>= i+1;++i) {
 			LinkedList<Diff> diffs = dmp.diffMain(lines2[i],lines[i+1]);
-			//dmp.diffCleanupSemantic(diffs);
+			//dmp.diffCleanupEfficiency(diffs);
+			dmp.diffCleanupSemantic(diffs);
+			dmp.diffCleanupMerge(diffs);
 			System.out.println("V2: "+ lines2[i] + " vs " + lines[i+1]);
-		    ret2.append("\\foreach{\\col}{}{");
+		    //ret2.append("\\foreach{\\col}{}{");
 		    for (Diff diff : diffs) {
 			    if (diff.operation == Operation.EQUAL) {
 			    	ret2.append(diff.text );
@@ -124,20 +127,24 @@ public class DiffAlign extends Align
 			    	{
 			    		String ts = ret2.substring(ret2.length()-1,ret2.length());
 			    		ret2 = ret2.deleteCharAt(ret2.length()-1);
-			    		ret2.append( ",\\colorlet{what}{red}" + ts+diff.text + ",");
+			    		ret2.append( "\\colorlet{red1}{red}\\colorlet{cur}{blackgreen1!50!red1}\\color{cur}" + ts+diff.text + "\\colorlet{red1}{black}\\colorlet{cur}{blackgreen1!50!red1}\\color{cur}");
 			    	}
 			    	else {
-			    		ret2.append(",\\colorlet{what}{red}" + diff.text + ",");
+			    		ret2.append( "\\colorlet{red1}{red}\\colorlet{cur}{blackgreen1!50!red1}\\color{cur}" + diff.text + "\\colorlet{red1}{black}\\colorlet{cur}{blackgreen1!50!red1}\\color{cur}");
 			    	}
 			    	}
 			    }
 		    }
-		    ret2.append("}");
+		    //ret2.append("}");
 			ret2.append("\\\\"+System.lineSeparator());
 		}
 		ret2.append(lines2[lines2.length-1]);
 		//return ret.toString();
-		return ret2.toString().replaceAll("😂", "\\\\color{black}").replaceAll( 
-				"😊", "\\\\color{green}");
-		}
+		//\\colorlet{save}{.}\\colorlet{cur}{save!50!red!90!}\\color{cur}
+		return ret2.toString().replaceAll("😂", "\\\\colorlet{blackgreen1}{black}\\\\colorlet{cur}{blackgreen1!50!red1}\\\\color{cur}")
+				.replaceAll( "😊",  "\\\\colorlet{blackgreen1}{green}\\\\colorlet{cur}{blackgreen1!50!red1}\\\\color{cur}")
+				.replaceAll("&", "\\\\xglobal\\\\colorlet{tmpand}{.}&\\\\color{tmpand}")
+				;
+
+						}
 	}

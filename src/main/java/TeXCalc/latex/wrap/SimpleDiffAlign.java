@@ -7,8 +7,7 @@ import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Diff;
 import org.bitbucket.cowwoc.diffmatchpatch.DiffMatchPatch.Operation;
 
-public class DiffAlign extends Align
-{
+public class SimpleDiffAlign extends Align {
 	public String too(String s) {
 		String ret = "";
 
@@ -103,41 +102,8 @@ public class DiffAlign extends Align
 			  }
 			  if(i!= lines.length-2)ret .append("\\\\"+System.lineSeparator());
 		}
-		String[] lines2 = ret.toString().replaceAll("\n", "").replaceAll("\r", "").split("\\\\\\\\");
-		for(int i = 0 ; i  < lines2.length-1;++i) {
-			LinkedList<Diff> diffs = dmp.diffMain(lines2[i],lines[i+1]);
-			//dmp.diffCleanupSemantic(diffs);
-			System.out.println("V2: "+ lines2[i] + " vs " + lines[i+1]);
-		    ret2.append("\\foreach{\\col}{}{");
-		    for (Diff diff : diffs) {
-			    if (diff.operation == Operation.EQUAL) {
-			    	ret2.append(diff.text );
-			    }
-			    
-			    if(diff.operation == Operation.DELETE) {
-			    	System.out.println("RM2 _"  + diff.text);
-			    	if(diff.text.equals("😊")|| diff.text.equals("😂")) {
-			    		ret2.append(diff.text);
-			    	}
-			    	else {
-			    	if(ret2.length()>0 && (ret2.charAt(ret2.length()-1)=='^' || ret2.charAt(ret2.length()-1)=='_' ))
-			    	{
-			    		String ts = ret2.substring(ret2.length()-1,ret2.length());
-			    		ret2 = ret2.deleteCharAt(ret2.length()-1);
-			    		ret2.append( ",\\colorlet{what}{red}" + ts+diff.text + ",");
-			    	}
-			    	else {
-			    		ret2.append(",\\colorlet{what}{red}" + diff.text + ",");
-			    	}
-			    	}
-			    }
-		    }
-		    ret2.append("}");
-			ret2.append("\\\\"+System.lineSeparator());
-		}
-		ret2.append(lines2[lines2.length-1]);
-		//return ret.toString();
-		return ret2.toString().replaceAll("😂", "\\\\color{black}").replaceAll( 
+		return ret.toString().replaceAll("😂", "\\\\color{black}").replaceAll( 
 				"😊", "\\\\color{green}");
 		}
-	}
+
+}

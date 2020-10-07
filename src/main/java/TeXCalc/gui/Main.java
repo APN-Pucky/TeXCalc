@@ -6,31 +6,27 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.jar.Attributes;
-import java.util.jar.Manifest;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.io.Files;
 
 import TeXCalc.compat.Compat;
-import TeXCalc.latex.Latex;
 import TeXCalc.util.Task;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,12 +52,12 @@ public class Main {
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu("A menu");
 		menubar.add(menu);
-
-		jframe.setJMenuBar(menubar);
 		
 		JToolBar toolBar = new JToolBar("Still draggable");
 		addButtons(toolBar);
-		
+
+
+
 		jframe.add(toolBar, BorderLayout.PAGE_START);
 		celllist = new CellList(11);
 		refreshTabs();
