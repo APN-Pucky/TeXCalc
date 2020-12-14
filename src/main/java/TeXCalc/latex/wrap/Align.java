@@ -2,7 +2,7 @@ package TeXCalc.latex.wrap;
 
 import TeXCalc.latex.Latex;
 
-public class Align extends Wrapper {
+public class Align extends Math{
 	public Align() {
 		super();
 		//setBegin(getBegin()+Latex.begin("aligned"));

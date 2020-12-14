@@ -23,6 +23,7 @@ import TeXCalc.latex.wrap.Equation;
 import TeXCalc.latex.wrap.Section;
 import TeXCalc.latex.wrap.SimpleDiffAlign;
 import TeXCalc.latex.wrap.SubSection;
+import TeXCalc.latex.wrap.SubSubSection;
 import TeXCalc.latex.wrap.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +42,7 @@ public class Cell{
 		hm.put("latex",new Wrapper());
 		hm.put("section",new Section());
 		hm.put("subsection",new SubSection());
+		hm.put("subsubsection",new SubSubSection());
 	}
 	//public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
 	//public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
