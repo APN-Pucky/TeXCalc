@@ -1,6 +1,7 @@
 package TeXCalc.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -8,22 +9,23 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
+import javax.swing.text.DefaultCaret;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.formdev.flatlaf.FlatLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import com.google.common.io.Files;
 
 import TeXCalc.compat.Compat;
@@ -43,6 +45,8 @@ public class Main {
 	String tmp_save = "tmp_save.json~";
 	
 	public Main() {
+		FlatLaf.install(new FlatLightLaf());
+		GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
 
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
@@ -62,6 +66,9 @@ public class Main {
 		celllist = new CellList(11);
 		refreshTabs();
 		
+		jframe.setResizable(true);
+		jframe.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		jframe.setUndecorated(true);
 		jframe.setVisible(true);
 		jframe.pack();
 		jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -79,7 +86,9 @@ public class Main {
 		if(tp!=null)jframe.remove(tp);
 		tp= new JTabbedPane();
 		tp.addTab("Notebook",null,jsp =new JScrollPane(celllist.getPanel()),"");
+		jsp.getVerticalScrollBar().setUnitIncrement(20);
 		tp.addTab("Settings",null,jsp =new JScrollPane(celllist.getLatex().getPanel()),"");
+		jsp.getVerticalScrollBar().setUnitIncrement(20);
 		jframe.add(tp);
 	}
 

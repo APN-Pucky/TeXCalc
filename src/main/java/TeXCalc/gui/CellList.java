@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
@@ -117,7 +118,7 @@ public class CellList
 		JPanel tmpp = new JPanel();
 		tmpp.setLayout(new BoxLayout(tmpp, BoxLayout.Y_AXIS));
 		tmpp.add(tools);
-		tmpp.add(cell.text);
+		tmpp.add(new JScrollPane(cell.text));
 		c.fill = GridBagConstraints.NONE;
 		c.weightx = 0.3;
 		c.weighty = 0.1;
@@ -193,17 +194,22 @@ public class CellList
 		});
 		//toolBar.add(toolBarp);
 	
+		button = GUI.buttonSync("Append", () -> {increase(cells.indexOf(c)+1);});
+		toolBarp.add(button);	
+
 		button = GUI.buttonSync("Up", () -> up(c));
 		toolBarp.add(button);
 		button = GUI.buttonSync("Down", () -> down(c));
 		toolBarp.add(button);
 
-		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){c.setText(""); c.queueUpdate();}});
+		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(panel,"Clean","Clean") ){c.setText(""); c.queueUpdate();}});
 		toolBarp.add(button);
 		
 		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){unlink(c);cells.remove(cells.indexOf(c));panel.revalidate();panel.repaint();}});
 		toolBarp.add(button);	
+
 		
+
 		toolBar.add(toolBarp);
 
 	}
@@ -224,6 +230,13 @@ public class CellList
 	{
 		Cell c = new Cell(latex);
 		cells.add(c);
+		//link(cells.size()-1);
+		linkAll();
+	}
+	public void increase(int index)
+	{
+		Cell c = new Cell(latex);
+		cells.add(index,c);
 		//link(cells.size()-1);
 		linkAll();
 	}

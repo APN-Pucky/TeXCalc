@@ -1,5 +1,6 @@
 package TeXCalc.gui;
 
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -27,6 +28,7 @@ import TeXCalc.latex.wrap.SubSubSection;
 import TeXCalc.latex.wrap.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
+import org.fife.ui.rsyntaxtextarea.*;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Cell{
@@ -72,8 +74,17 @@ public class Cell{
 		this.latex = latex;
 		//environment = e;
         //icon = new JLabel();
-        text = new JTextArea(stext,5,80);
-        text.setLineWrap(true);
+        //text = new JTextArea(stext,5,80);
+        text = GUI.areaLatex(stext,6,100);
+		//axTextArea rs = new RSyntaxTextArea(stext,5,100);
+		//rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+		//rs.setHighlightCurrentLine(false);
+		//rs.setAutoscrolls(true);
+		//text = rs;
+        
+		text.setLineWrap(true);
+		//text.setPreferredSize(new Dimension(150,100));
+        //text.setLineWrap(true);
         text.addKeyListener((new KeyListener() {
 
             @Override

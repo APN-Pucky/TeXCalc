@@ -28,8 +28,12 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.UIManager;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.NumberFormatter;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 import TeXCalc.util.Log;
 import TeXCalc.util.Task;
@@ -44,6 +48,16 @@ public class GUI {
 	    ex.printStackTrace();
 	}
 	}*/
+	
+	public static void setUIFont (javax.swing.plaf.FontUIResource f){
+	    java.util.Enumeration keys = UIManager.getDefaults().keys();
+	    while (keys.hasMoreElements()) {
+	      Object key = keys.nextElement();
+	      Object value = UIManager.get (key);
+	      if (value instanceof javax.swing.plaf.FontUIResource)
+	        UIManager.put (key, f);
+	      }
+	    }
 	
 
 	public static boolean confirm(Component c ,String msg,String title) {
@@ -64,7 +78,24 @@ public class GUI {
 		 dialog.setSize(new Dimension(300,600));
 		 dialog.setVisible(true);
 	}
-	
+	public static JTextArea areaLatex(String s, int w, int h) {
+		RSyntaxTextArea rs = new RSyntaxTextArea(s,w,h);
+		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+		rs.setHighlightCurrentLine(false);
+
+		DefaultCaret caret = (DefaultCaret) rs.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		return rs;
+	}
+	public static JTextArea areaLatex(String s) {
+		RSyntaxTextArea rs = new RSyntaxTextArea(s);
+		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
+		rs.setHighlightCurrentLine(false);
+
+		DefaultCaret caret = (DefaultCaret) rs.getCaret();
+		caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+		return rs;
+	}
 	
 	public static JTextArea area()
 	{

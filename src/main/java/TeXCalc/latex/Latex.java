@@ -10,7 +10,11 @@ import java.util.UUID;
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+
+import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
+import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +30,7 @@ public class Latex {
 	public static boolean PRINT = false;
 	public static boolean TIME = false;
 	//public static String TEXENGINE = "lualatex";
-	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert]{standalone}\n";
+	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert,varwidth]{standalone}\n";
 	public static String TYPE_DOCUMENT = "\\documentclass{article}\n";
 	public static String FRAMETOP =
 			"\\usepackage{amsfonts}\n"+
@@ -63,21 +67,28 @@ public class Latex {
 	public Latex() {
 		this(FRAMETOP, FRAMEEND);
 	}
+	
+	
 
 	@JsonCreator
 	public Latex(@JsonProperty("top") String top,@JsonProperty("end") String end) {
 		panel = new JPanel();
 		
-		this.top = GUI.area(top);
-		this.end = GUI.area(end);
+		this.top = GUI.areaLatex(top);
+		this.end = GUI.areaLatex(end);
 		engine = GUI.area("lualatex");
-		standaloneType = GUI.area(TYPE_STANDALONE);
-		documentType = GUI.area(TYPE_DOCUMENT);
+		standaloneType = GUI.areaLatex(TYPE_STANDALONE);
+		documentType = GUI.areaLatex(TYPE_DOCUMENT);
+
 		panel.setLayout(new BoxLayout(panel,BoxLayout.PAGE_AXIS));
 		panel.add(engine);
+		panel.add(new JSeparator());
 		panel.add(standaloneType);
+		panel.add(new JSeparator());
 		panel.add(documentType);
+		panel.add(new JSeparator());
 		panel.add(this.top);
+		panel.add(new JSeparator());
 		panel.add(this.end);
 	}
 	
