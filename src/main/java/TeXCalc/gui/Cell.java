@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import TeXCalc.config.Config;
 import TeXCalc.config.Default;
 import TeXCalc.latex.Latex;
 import TeXCalc.latex.wrap.Align;
@@ -52,7 +53,7 @@ public class Cell{
 	protected JTextArea text;
 	protected JLabel icon = new JLabel();
 	@Getter @Setter
-	protected String environment = Default.environment;
+	protected String environment = Config.current.getEnvironment();
 	
 	@Getter @Setter @JsonIgnore
 	protected Latex latex;
@@ -75,7 +76,7 @@ public class Cell{
 		//environment = e;
         //icon = new JLabel();
         //text = new JTextArea(stext,5,80);
-        text = GUI.areaLatex(stext,6,100);
+        text = GUI.areaLatex(stext,Config.current.getNumberOfLines(),Config.current.getWidthOfLines());
 		//axTextArea rs = new RSyntaxTextArea(stext,5,100);
 		//rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		//rs.setHighlightCurrentLine(false);

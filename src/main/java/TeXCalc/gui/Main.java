@@ -21,19 +21,26 @@ import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 import javax.swing.text.DefaultCaret;
 
+import org.fife.ui.rsyntaxtextarea.Theme;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.github.weisj.darklaf.LafManager;
+import com.github.weisj.darklaf.theme.DarculaTheme;
 import com.google.common.io.Files;
 
 import TeXCalc.compat.Compat;
+import TeXCalc.config.Config;
+import TeXCalc.config.Default;
 import TeXCalc.util.Task;
 import lombok.Getter;
 import lombok.Setter;
 
 public class Main {
+	
 	@Getter
 	CellList celllist= null;
 	JTabbedPane tp= null;
@@ -43,10 +50,12 @@ public class Main {
 	String version = "DEV";
 	JFrame jframe;
 	String tmp_save = "tmp_save.json~";
+	static { loadConfig();}
 	
 	public Main() {
-		FlatLaf.install(new FlatLightLaf());
-		GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
+		//FlatLaf.install(new FlatLightLaf());
+		if(Config.current.getTheme().equals("dark"))LafManager.install(new DarculaTheme());
+				//GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
 
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
@@ -117,6 +126,8 @@ public class Main {
 		button = GUI.buttonAsync("Add Cell", () -> addCell());
 		toolBar.add(button);
 		
+		button = GUI.buttonAsync("Config", () -> config());
+		toolBar.add(button);
 		//button = GUI.buttonAsync("Settings", () -> celllist.getLatex().settings()); // todo top und end, changes
 		//toolBar.add(button);
 		// TODO Settings
@@ -177,6 +188,22 @@ public class Main {
 			r.set("celllist", objectMapper.valueToTree(celllist));
 			objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(filename),r);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	public void config() {
+		Config.current.display();
+		
+	}
+	
+	public static void loadConfig() {
+		ObjectMapper objectMapper = new ObjectMapper();
+        try {
+        	Config.current = objectMapper.readValue(new File(System.getProperty("user.dir") +System.getProperty("file.separator")+ Config.configfile), Config.class);
+        }
+		catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

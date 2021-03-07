@@ -1,6 +1,7 @@
 package TeXCalc.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -8,6 +9,7 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -34,7 +36,9 @@ import javax.swing.text.NumberFormatter;
 
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
+import org.fife.ui.rsyntaxtextarea.Theme;
 
+import TeXCalc.config.Config;
 import TeXCalc.util.Log;
 import TeXCalc.util.Task;
 
@@ -48,6 +52,17 @@ public class GUI {
 	    ex.printStackTrace();
 	}
 	}*/
+		     public static Theme theme;
+		     static {
+		    	 try {
+					theme = Theme.load(GUI.class.getResourceAsStream(
+					   "/org/fife/ui/rsyntaxtextarea/themes/" + Config.current.getTheme() + ".xml"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		     }
+
 	
 	public static void setUIFont (javax.swing.plaf.FontUIResource f){
 	    java.util.Enumeration keys = UIManager.getDefaults().keys();
@@ -80,6 +95,8 @@ public class GUI {
 	}
 	public static JTextArea areaLatex(String s, int w, int h) {
 		RSyntaxTextArea rs = new RSyntaxTextArea(s,w,h);
+		theme.apply(rs);
+		rs.setBackground(Color.decode(Config.current.getBackgroundColor()));
 		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		rs.setHighlightCurrentLine(false);
 
@@ -89,6 +106,8 @@ public class GUI {
 	}
 	public static JTextArea areaLatex(String s) {
 		RSyntaxTextArea rs = new RSyntaxTextArea(s);
+		theme.apply(rs);
+		rs.setBackground(Color.decode(Config.current.getBackgroundColor()));
 		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		rs.setHighlightCurrentLine(false);
 
