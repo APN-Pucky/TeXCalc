@@ -26,23 +26,23 @@ repositories {
 
 dependencies {
     // This dependency is exported to consumers, that is to say found on their compile classpath.
-    compile 'org.apache.commons:commons-math3:3.6.1'
-	compile 'org.json:json:20190722'
+    implementation 'org.apache.commons:commons-math3:3.6.1'
+	implementation 'org.json:json:20190722'
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    compile 'com.google.guava:guava:28.0-jre'
+    implementation 'com.google.guava:guava:28.0-jre'
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
     
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0.rc1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0.rc1'
     
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0.rc1'
-    compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0.rc1'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.5'
     
-    compile group: 'org.bitbucket.cowwoc', name: 'diff-match-patch', version: '1.2'
-    compile group: 'com.formdev', name: 'flatlaf', version: '0.45'
-    compile group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
-	compile group: 'com.github.weisj', name: 'darklaf-core', version: '2.5.5'
+    implementation group: 'org.bitbucket.cowwoc', name: 'diff-match-patch', version: '1.2'
+    implementation group: 'com.formdev', name: 'flatlaf', version: '0.45'
+    implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
+	implementation group: 'com.github.weisj', name: 'darklaf-core', version: '2.5.5'
 }
 
 task fatJar(type: Jar) {
@@ -52,6 +52,9 @@ task fatJar(type: Jar) {
         	'Main-Class': 'TeXCalc.debug.DebugMain'
     }
     baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    from { 
+    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }{
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+    }
     with jar
 }
