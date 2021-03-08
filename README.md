@@ -7,3 +7,4 @@ Live rendered latex
 ## Requirements
 
 * latexmk
+* pdftoppm
