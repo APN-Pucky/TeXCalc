@@ -41,6 +41,7 @@ public class CellList
 	public ArrayList<Cell> cells = new ArrayList<Cell>();
 	@JsonIgnore
 	private HashMap<Cell,JPanel> barmap= new HashMap<Cell,JPanel>();
+	
 
 	//@JsonValue
 	//@JsonSerialize

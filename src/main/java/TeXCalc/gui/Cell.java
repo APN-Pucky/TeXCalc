@@ -22,11 +22,13 @@ import TeXCalc.latex.wrap.Align;
 import TeXCalc.latex.wrap.DiffAlign;
 import TeXCalc.latex.wrap.DiffAlign2;
 import TeXCalc.latex.wrap.Equation;
+import TeXCalc.latex.wrap.Image;
 import TeXCalc.latex.wrap.Section;
 import TeXCalc.latex.wrap.SimpleDiffAlign;
 import TeXCalc.latex.wrap.SubSection;
 import TeXCalc.latex.wrap.SubSubSection;
 import TeXCalc.latex.wrap.Wrapper;
+import TeXCalc.python.Python;
 import lombok.Getter;
 import lombok.Setter;
 import org.fife.ui.rsyntaxtextarea.*;
@@ -46,12 +48,15 @@ public class Cell{
 		hm.put("section",new Section());
 		hm.put("subsection",new SubSection());
 		hm.put("subsubsection",new SubSubSection());
+		hm.put("python",new Wrapper());
+		hm.put("image",new Image());
 	}
 	//public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
 	//public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
 	
 	protected JTextArea text;
 	protected JLabel icon = new JLabel();
+
 	@Getter @Setter
 	protected String environment = Config.current.getEnvironment();
 	
@@ -128,6 +133,12 @@ public class Cell{
 	*/
 	public String toLatex(boolean stared, boolean math) {
 		if(getText().trim().equals(""))return"";
+		if(environment.equals("python")) {
+			return Python.toLatex(getText(),latex);
+		}
+		if(environment.contentEquals("image")) {
+			latex.cache(getText());
+		}
 		if(math) {
 			return hm.get(environment).toStandalone(getText());
 		}
@@ -151,6 +162,12 @@ public class Cell{
 	
 	public void queueUpdate()
 	{
+		final long millis = System.currentTimeMillis();
+	new Thread( () ->{
+		BufferedImage img = null;
+		if(latex != null)
+			img= latex.snipImage(toLatex(true,true));
+		final BufferedImage fimg = img;
 		synchronized(this) {
 			if(updating) {
 				reupdate = true;
@@ -158,22 +175,29 @@ public class Cell{
 			else {
 				reupdate = false;
 				updating = true;
-				new Thread(() -> update()).start();
+				new Thread(() -> update(fimg,millis)).start();
 			}
 		}
+	}).start();
 	}
 	
-	public void update() {
+	private long lastmillis = 0;
+	public synchronized void update(BufferedImage img, long millis) {
 		if(latex!=null) {
-			BufferedImage img= latex.snipImage(toLatex(true,true));
-			if ( img != null) {
+			//BufferedImage img= latex.snipImage(toLatex(true,true));
+			if ( img != null && millis> lastmillis) {
 		        //icon = new JLabel();
+				//synchronized(this) 
+				{
+					lastmillis = millis;
+				}
 		        ImageIcon icon2=new ImageIcon(img);
 		        icon.setIcon(icon2);
 				
 			}
 		}
-        synchronized(this) {
+        //synchronized(this) 
+        {
         	updating = false;
         	if(reupdate)queueUpdate();
         }

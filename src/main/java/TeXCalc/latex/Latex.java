@@ -3,8 +3,14 @@ package TeXCalc.latex;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -13,20 +19,21 @@ import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 
-import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
-import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.Files;
 
+import TeXCalc.config.Config;
 import TeXCalc.gui.GUI;
+import TeXCalc.util.IO;
 import TeXCalc.util.Task;
+import lombok.Getter;
+import lombok.Setter;
 
 
 public class Latex {
-	public static Latex _default = new Latex();
+	//public static Latex _default = new Latex();
 	public static boolean PRINT = false;
 	public static boolean TIME = false;
 	//public static String TEXENGINE = "lualatex";
@@ -42,13 +49,18 @@ public class Latex {
 			"\\setlength\\parindent{0pt}"+
 			"\\begin{document}\n";
 	public static String FRAMEEND = "\\end{document}\n";
-	
+
+	@Getter 
+	@Setter
+	public HashMap<String,String> filecache = new HashMap<String,String>();
+
+
 	private JTextArea engine ;
 	private JTextArea standaloneType ;
 	private JTextArea documentType;
 	private JTextArea top;
 	private JTextArea end;
-	
+
 	public String getTop() { return top.getText();}
 	public String getEnd() { return end.getText();}
 	public String getStandaloneType() { return standaloneType.getText();}
@@ -68,7 +80,6 @@ public class Latex {
 		this(FRAMETOP, FRAMEEND);
 	}
 	
-	
 
 	@JsonCreator
 	public Latex(@JsonProperty("top") String top,@JsonProperty("end") String end) {
@@ -76,7 +87,7 @@ public class Latex {
 		
 		this.top = GUI.areaLatex(top);
 		this.end = GUI.areaLatex(end);
-		engine = GUI.area("lualatex");
+		engine = GUI.area(Config.current.getDefaultEngine());
 		standaloneType = GUI.areaLatex(TYPE_STANDALONE);
 		documentType = GUI.areaLatex(TYPE_DOCUMENT);
 
@@ -92,11 +103,20 @@ public class Latex {
 		panel.add(this.end);
 	}
 	
+	public void cache(String f) {
+		System.out.println("Cached " + f);
+		try {
+					filecache.put(f, IO.encodeFileToBase64Binary(f));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	}
 	
 	public File toPdf(String latex) {
 		String uuid = UUID.randomUUID().toString();
 		String TEMP_DIRECTORY = ".tmp" + File.separator + uuid;
-		String TEMP_TEX_FILE_NAME = uuid; // for New22.tex
+		String TEMP_TEX_FILE_NAME = "export"; // for New22.tex
 		String ret = TEMP_DIRECTORY + File.separator + TEMP_TEX_FILE_NAME + ".png";
 		File ret_file = new File(TEMP_DIRECTORY + File.separator + TEMP_TEX_FILE_NAME + ".pdf") ;
 
@@ -117,6 +137,39 @@ public class Latex {
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
+		
+		for(String f : filecache.keySet()) {
+			File ff = new File(f);
+			if(ff.exists()) {
+				try {
+					System.out.println("copied");
+					File fi = (new File(TEMP_DIRECTORY + File.separator  + "tex" + File.separator+ f));
+					fi.getParentFile().mkdirs();
+					Files.copy(ff,fi);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				cache(f);
+				
+			}
+			else {
+			byte[] decodedImg = Base64.getDecoder()
+                    .decode(filecache.get(f).getBytes(StandardCharsets.UTF_8));
+			try {
+				File fn = new File (TEMP_DIRECTORY + File.separator + "tex" + File.separator + f);
+				fn.getParentFile().mkdirs();
+				fn.createNewFile();
+				FileOutputStream fos = new FileOutputStream(fn);
+				fos.write(decodedImg);
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
+		
 		System.out.print("  3. Execute LaTeX {" + uuid + "} from command line  to generate picture = ");
 		ProcessBuilder pb = new ProcessBuilder(getEngine(),  "-halt-on-error",
 				TEMP_TEX_FILE_NAME + ".tex");
@@ -209,11 +262,14 @@ public class Latex {
 
 	private void cleanUp(String TEMP_DIRECTORY, String TEMP_TEX_FILE_NAME) {
 		// 5. Delete files
+		new File(TEMP_DIRECTORY).deleteOnExit();
+		/*
 		for (File file : (new File(TEMP_DIRECTORY + File.separator + "tex").listFiles())) {
 			if (file.getName().startsWith(TEMP_TEX_FILE_NAME + ".")) {
-				//file.delete();
+				file.deleteOnExit();
 			}
 		}
+		*/
 	}
 	
 	public JPanel getPanel()

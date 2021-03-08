@@ -1,14 +1,12 @@
 package TeXCalc.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -19,22 +17,17 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
-import javax.swing.text.DefaultCaret;
 
-import org.fife.ui.rsyntaxtextarea.Theme;
+import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.formdev.flatlaf.FlatLaf;
-import com.formdev.flatlaf.FlatLightLaf;
 import com.github.weisj.darklaf.LafManager;
 import com.github.weisj.darklaf.theme.DarculaTheme;
-import com.google.common.io.Files;
 
 import TeXCalc.compat.Compat;
 import TeXCalc.config.Config;
-import TeXCalc.config.Default;
 import TeXCalc.util.Task;
 import de.neuwirthinformatik.Alexander.GitJarUpdate.Update;
 import lombok.Getter;
@@ -59,6 +52,9 @@ public class Main {
 				//GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
 
 		Update.loadUpdate("TeXCalc-all.jar", "APN-Pucky", "TeXCalc");
+		File tf = new File(".tmp");
+		if(!tf.exists() || !tf.isDirectory())tf.mkdir();
+		for(File f : tf.listFiles()) f.delete();
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
 		jframe = new JFrame("TeXCalc");
@@ -138,37 +134,65 @@ public class Main {
 	}
 	
 	public void export() {
+		File ef =  new File(System.getProperty("user.dir") + File.separator + "export");
+		if( ef.exists() )
+		{
+		try {
+			FileUtils.deleteDirectory(ef);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		}
 		String tex = celllist.toLaTeX();
+		/*
 		PrintWriter writer;
 		try {
-			writer = new PrintWriter("export.tex", "UTF-8");
+			writer = new PrintWriter(System.getProperty("user.dir")+ File.separator + "export" + File.separator +"export.tex", "UTF-8");
 			writer.print(tex);
 			writer.close();
 		} catch (FileNotFoundException | UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 		
 		File f = celllist.getLatex().toPdf(tex);
 		try {
 			if(f != null && f.exists())
 			{
-				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export.pdf"));
+				copyDirectory(f.getParentFile().getAbsolutePath(), "export");
+				/*
+				File[] fl = f.getParentFile().listFiles();
+				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export"+ File.separator + "export.pdf"));
+				for(File ff : fl)
+					Files.copy(ff, new File(System.getProperty("user.dir") + File.separator + "export" + File.separator + ff.getName()));
 				try {
-					ImageIO.write(celllist.getLatex().pdfToImage(new File(System.getProperty("user.dir") + File.separator + "export.pdf")), "png", new File(System.getProperty("user.dir") + File.separator + "export.png"));
+					ImageIO.write(celllist.getLatex().pdfToImage(new File(System.getProperty("user.dir") + File.separator + "export"+ File.separator + "export.pdf")), "png", new File(System.getProperty("user.dir")  + File.separator + "export"+ File.separator + "export.png"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				*/
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated #catch block
 			e.printStackTrace();
 		}
-		
-		
-		
 	}
+	public static void copyDirectory(String sourceDirectoryLocation, String destinationDirectoryLocation) 
+			  throws IOException {
+			    Files.walk(Paths.get(sourceDirectoryLocation))
+			      .forEach(source -> {
+			          Path destination = Paths.get(destinationDirectoryLocation, source.toString()
+			            .substring(sourceDirectoryLocation.length()));
+			          try {
+			              Files.copy(source, destination);
+			          } catch (IOException e) {
+			              e.printStackTrace();
+			          }
+			      });
+			}
 	
 	public void addCell() {
 		celllist.increase();

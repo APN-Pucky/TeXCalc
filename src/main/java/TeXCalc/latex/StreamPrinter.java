@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-class StreamPrinter implements Runnable {
+public class StreamPrinter implements Runnable {
 
     // Source: http://labs.excilys.com/2012/06/26/runtime-exec-pour-les-nuls-et-processbuilder/
     private final InputStream inputStream;
-
+    public String text = "";
     private boolean print;
 
-    StreamPrinter(InputStream inputStream, boolean print) {
+    public StreamPrinter(InputStream inputStream, boolean print) {
         this.inputStream = inputStream;
         this.print = print;
     }
@@ -29,6 +29,10 @@ class StreamPrinter implements Runnable {
             while ((ligne = br.readLine()) != null) {
                 if (print) {
                     System.out.println(ligne);
+                    text += ligne + "\n";
+                }
+                else {
+                	text += ligne + "\n";
                 }
             }
         } catch (IOException e) {
