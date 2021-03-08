@@ -36,6 +36,7 @@ import TeXCalc.compat.Compat;
 import TeXCalc.config.Config;
 import TeXCalc.config.Default;
 import TeXCalc.util.Task;
+import de.neuwirthinformatik.Alexander.GitJarUpdate.Update;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -57,6 +58,7 @@ public class Main {
 		if(Config.current.getTheme().equals("dark"))LafManager.install(new DarculaTheme());
 				//GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
 
+		Update.loadUpdate("TeX-Calc-all.jar", "APN-Pucky", "TeXCalc");
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
 		jframe = new JFrame("TeXCalc");
