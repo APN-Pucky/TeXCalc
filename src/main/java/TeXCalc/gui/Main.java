@@ -58,7 +58,7 @@ public class Main {
 		if(Config.current.getTheme().equals("dark"))LafManager.install(new DarculaTheme());
 				//GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
 
-		Update.loadUpdate("TeX-Calc-all.jar", "APN-Pucky", "TeXCalc");
+		Update.loadUpdate("TeXCalc-all.jar", "APN-Pucky", "TeXCalc");
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
 		jframe = new JFrame("TeXCalc");
