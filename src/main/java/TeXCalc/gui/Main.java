@@ -53,8 +53,13 @@ public class Main {
 
 		Update.loadUpdate("TeXCalc-all.jar", "APN-Pucky", "TeXCalc");
 		File tf = new File(".tmp");
+		try {
+			FileUtils.deleteDirectory(tf);
+		} catch (IOException e) {
+			// TODO Auto-generatd catch block
+			e.printStackTrace();
+		}
 		if(!tf.exists() || !tf.isDirectory())tf.mkdir();
-		for(File f : tf.listFiles()) f.delete();
 		version = getClass().getPackage().getImplementationVersion();
 		version = version==null?"DEV":version;
 		jframe = new JFrame("TeXCalc");
@@ -156,7 +161,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		*/
-		
+		celllist.getLatex().cleanCache(tex);
 		File f = celllist.getLatex().toPdf(tex);
 		try {
 			if(f != null && f.exists())

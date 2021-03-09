@@ -28,6 +28,7 @@ import lombok.Data;
 public class Config {
 	public static Config current = new Config();
 	public static final String configfile = "conf.json";
+	String python = "python3.7";
 	String defaultEngine = "lualatex";
 	String theme= "dark";
 	String environment = "aligned";

@@ -1,10 +1,11 @@
 package TeXCalc.python;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.UUID;
 
+import TeXCalc.config.Config;
+import TeXCalc.exec.Exec;
 import TeXCalc.latex.Latex;
 import TeXCalc.latex.StreamPrinter;
 import TeXCalc.util.IO;
@@ -13,22 +14,55 @@ import TeXCalc.util.Task;
 public class Python{
 	public static boolean PRINT = false;
 	public static boolean TIME = false;
- public static String toLatex(String py,Latex l)
+	public static String ipynb_py_convert =  "import re\n" + 
+			"import sys\n" + 
+			"from ipynb_py_convert.__main__ import main\n" + 
+			"if __name__ == '__main__':\n" + 
+			"    sys.argv[0] = re.sub(r'(-script\\.pyw|\\.exe)?$', '', sys.argv[0])\n" + 
+			"    sys.exit(main())\n";
+	public static String toLatex(String py, Latex l) {
+		String filename = "tmp_jupyter_" + UUID.randomUUID().toString();
+		Exec ex = new Exec("jupyter");
+		ex.writeFile(filename + ".py",py);
+		ex.writeFile("ipynb-nb-convert.py", ipynb_py_convert);
+		ex.exec(Config.current.getPython(),"ipynb-nb-convert.py", filename + ".py",filename + ".ipynb");
+		String ret = ex.exec("jupyter","nbconvert","--to","latex","--execute", filename + ".ipynb");
+		if(!ret.equals(""))
+			{
+			System.out.println(ret);
+			return  ret.split("------------------")[2]
+					.replaceAll("\u001B\\[0;31m", " \\\\color{red}")
+					.replaceAll("\u001B\\[0;36m", " \\\\color{green}")
+					.replaceAll("\u001B\\[0;32m", " \\\\color{blue}")
+					.replaceAll("\u001B\\[0m", " \\\\color{black}")
+					.replaceAll("\\^", "\\\\^\\\\")
+					.replaceAll("\n","\n\n")
+					;
+			}
+		String s = ex.readFile(filename+ ".tex").split("maketitle")[1];
+		s = s.split("\\\\end\\{tcolorbox\\}")[1];
+		s = s.split("\\\\end\\{document\\}")[0];
+		
+		File jpd = new File(ex.getDirName() + filename + "_files");
+		if(jpd.exists()) {
+			for(File f : jpd.listFiles()) {
+				l.cache(filename + "_files" + File.separator + f.getName(), f);
+			}
+		}
+		return s;
+	}
+
+ public static String toLatex2(String py,Latex l)
  {
 	 	String tj = "tmp_jupyter_";
 		String uuid = tj + UUID.randomUUID().toString();
 
-		FileWriter writer = null;
-	 try {
-			writer = new FileWriter(
-					uuid + ".py", false);
-			writer.write(py, 0, py.length());
-			writer.close();
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		IO.writeFile(uuid+".py",py);
 
-		ProcessBuilder pb = new ProcessBuilder("python3.7","-m","ipynb-py-convert",  uuid + ".py" , uuid + ".ipynb");
+		if(!new File("ipynb-py-convert.py").exists())
+		IO.writeFile("ipynb-py-convert"+".py",ipynb_py_convert);
+		new File("ipynb-py-convert.py").deleteOnExit();
+		ProcessBuilder pb = new ProcessBuilder("python3.7","ipynb-py-convert.py",  uuid + ".py" , uuid + ".ipynb");
 		try {
 			long startTime = System.nanoTime();
 			Process p = pb.start();
@@ -80,10 +114,11 @@ public class Python{
 			for(File f : new File(uuid + "_files").listFiles()) {
 				l.cache(f.getPath());
 			}
-			new File(uuid+ "_files").deleteOnExit();
+			new File(uuid+ "_files").delete();
 		}
-		new File(uuid+ ".py").deleteOnExit();
-		new File(uuid+ ".ipynb").deleteOnExit();
+		new File(uuid+ ".py").delete();
+		new File(uuid+ ".ipynb").delete();
+		new File(uuid+ ".tex").delete();
 		
 		return s;
  }

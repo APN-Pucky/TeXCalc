@@ -7,10 +7,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.UUID;
 
 import javax.imageio.ImageIO;
@@ -25,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.Files;
 
 import TeXCalc.config.Config;
+import TeXCalc.exec.Exec;
 import TeXCalc.gui.GUI;
 import TeXCalc.util.IO;
 import TeXCalc.util.Task;
@@ -102,18 +102,124 @@ public class Latex {
 		panel.add(new JSeparator());
 		panel.add(this.end);
 	}
-	
+	public void cache(String key, String f) {
+		//System.out.println("Cached " + f);
+		if(new File(f).exists()) {
+		try {
+					filecache.put(key, IO.encodeFileToBase64Binary(f));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+	}
+	public void cache(String key, File f) {
+		//System.out.println("Cached " + f);
+		if(f.exists()) {
+		try {
+					filecache.put(key, IO.encodeFileToBase64Binary(f.getPath()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+	}
+	public void cache(File f) {
+		//System.out.println("Cached " + f);
+		if(f.exists()) {
+		try {
+					filecache.put(f.getPath(), IO.encodeFileToBase64Binary(f.getPath()));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+	}
 	public void cache(String f) {
-		System.out.println("Cached " + f);
+		//System.out.println("Cached " + f);
+		if(new File(f).exists()) {
 		try {
 					filecache.put(f, IO.encodeFileToBase64Binary(f));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+		}
+	}
+	
+	public void cleanCache(String cont) {
+		Iterator<String> it =filecache.keySet().iterator();
+		while(it.hasNext()) {
+			String f = it.next();
+			if(!cont.contains(f))it.remove();
+		}
+	}
+	
+	public void pasteCache(String dir) {
+		if(!new File(dir).isDirectory()) throw new RuntimeException("Can only paste Cache in directory");
+		for(String f : filecache.keySet()) {
+			File ff = new File(f);
+			if(ff.exists()) {
+				try {
+					//System.out.println("copied");
+					File fi = (new File(dir+ File.separator+ f));
+					fi.getParentFile().mkdirs();
+					Files.copy(ff,fi);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				cache(f);
+				
+			}
+			else {
+			byte[] decodedImg = Base64.getDecoder()
+                    .decode(filecache.get(f).getBytes(StandardCharsets.UTF_8));
+			try {
+				File fn = new File (dir+ File.separator + f);
+				fn.getParentFile().mkdirs();
+				fn.createNewFile();
+				FileOutputStream fos = new FileOutputStream(fn);
+				fos.write(decodedImg);
+				fos.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+		}
 	}
 	
 	public File toPdf(String latex) {
+		String filename = "export";
+		Exec ex = new Exec("tex");
+		IO.writeFile(ex.getDirName() + filename + ".tex", latex);
+		pasteCache(ex.getDirName());
+		ex.exec(getEngine(),  "-halt-on-error",filename+ ".tex");
+
+		File ret_file = new File(ex.getDirName() + File.separator +".."+ File.separator + filename+ ".pdf");
+		
+		try {
+			File tmp = new File(ex.getDirName() + File.separator + filename + ".pdf");
+			if(tmp.exists()) {
+				Files.move(tmp,ret_file);
+			}
+			else
+			{
+				ret_file = null;
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			ret_file = null;
+		}
+
+		//cleanUp(, TEMP_TEX_FILE_NAME);
+
+		return ret_file;
+	}
+	
+	public File toPdf2(String latex) {
 		String uuid = UUID.randomUUID().toString();
 		String TEMP_DIRECTORY = ".tmp" + File.separator + uuid;
 		String TEMP_TEX_FILE_NAME = "export"; // for New22.tex
