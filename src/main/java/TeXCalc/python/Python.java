@@ -20,12 +20,50 @@ public class Python{
 			"if __name__ == '__main__':\n" + 
 			"    sys.argv[0] = re.sub(r'(-script\\.pyw|\\.exe)?$', '', sys.argv[0])\n" + 
 			"    sys.exit(main())\n";
+	
+	public static String ipynb_template(String py) { return  "{\n" + 
+			"  \"cells\": [\n" + 
+			"    {\n" + 
+			"      \"cell_type\": \"code\",\n" + 
+			"      \"metadata\": {},\n" + 
+			"      \"source\": [\n" + 
+					"\t\"" + py.replaceAll("\n", "\\\\n\",\n\t\"") + "\\n\""+
+			"      ],\n" + 
+			"      \"outputs\": [],\n" + 
+			"      \"execution_count\": null\n" + 
+			"    }\n" + 
+			"  ],\n" + 
+			"  \"metadata\": {\n" + 
+			"    \"anaconda-cloud\": {},\n" + 
+			"    \"kernelspec\": {\n" + 
+			"      \"display_name\": \"Python 3\",\n" + 
+			"      \"language\": \"python\",\n" + 
+			"      \"name\": \"python3\"\n" + 
+			"    },\n" + 
+			"    \"language_info\": {\n" + 
+			"      \"codemirror_mode\": {\n" + 
+			"        \"name\": \"ipython\",\n" + 
+			"        \"version\": 3\n" + 
+			"      },\n" + 
+			"      \"file_extension\": \".py\",\n" + 
+			"      \"mimetype\": \"text/x-python\",\n" + 
+			"      \"name\": \"python\",\n" + 
+			"      \"nbconvert_exporter\": \"python\",\n" + 
+			"      \"pygments_lexer\": \"ipython3\",\n" + 
+			"      \"version\": \"3.6.1\"\n" + 
+			"    }\n" + 
+			"  },\n" + 
+			"  \"nbformat\": 4,\n" + 
+			"  \"nbformat_minor\": 4\n" + 
+			"}\n"; 
+	}
 	public static String toLatex(String py, Latex l) {
 		String filename = "tmp_jupyter_" + UUID.randomUUID().toString();
 		Exec ex = new Exec("jupyter");
-		ex.writeFile(filename + ".py",py);
-		ex.writeFile("ipynb-nb-convert.py", ipynb_py_convert);
-		ex.exec(Config.current.getPython(),"ipynb-nb-convert.py", filename + ".py",filename + ".ipynb");
+		//ex.writeFile(filename + ".py",py);
+		//ex.writeFile("ipynb-nb-convert.py", ipynb_py_convert);
+		//ex.exec(Config.current.getPython(),"ipynb-nb-convert.py", filename + ".py",filename + ".ipynb");
+		ex.writeFile(filename + ".ipynb",ipynb_template(py));
 		String ret = ex.exec("jupyter","nbconvert","--to","latex","--execute", filename + ".ipynb");
 		if(!ret.equals(""))
 			{
