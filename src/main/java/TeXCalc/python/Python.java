@@ -2,7 +2,11 @@ package TeXCalc.python;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.json.JSONObject;
 
 import TeXCalc.config.Config;
 import TeXCalc.exec.Exec;
@@ -13,6 +17,7 @@ import TeXCalc.util.Task;
 
 public class Python{
 	public static boolean PRINT = false;
+	public static boolean FULL = false;
 	public static boolean TIME = false;
 	public static String ipynb_py_convert =  "import re\n" + 
 			"import sys\n" + 
@@ -27,7 +32,7 @@ public class Python{
 			"      \"cell_type\": \"code\",\n" + 
 			"      \"metadata\": {},\n" + 
 			"      \"source\": [\n" + 
-					"\t\"" + py.replaceAll("\n", "\\\\n\",\n\t\"") + "\\n\""+
+					"\t" + String.join(",\n\t",Arrays.asList(py.split("\n")).stream().map((String a) -> JSONObject.quote(a+ "\n")).collect(Collectors.toList())) + "\n"+
 			"      ],\n" + 
 			"      \"outputs\": [],\n" + 
 			"      \"execution_count\": null\n" + 
@@ -78,7 +83,7 @@ public class Python{
 					;
 			}
 		String s = ex.readFile(filename+ ".tex").split("maketitle")[1];
-		s = s.split("\\\\end\\{tcolorbox\\}")[1];
+		if(!FULL)s = s.substring(s.indexOf("\\end{tcolorbox}")+15);
 		s = s.split("\\\\end\\{document\\}")[0];
 		
 		File jpd = new File(ex.getDirName() + filename + "_files");
