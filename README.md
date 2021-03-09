@@ -6,5 +6,9 @@ Live rendered latex
 
 ## Requirements
 
-* latexmk
+* lualatex (or latexmk, pdflatex, ...)
 * pdftoppm
+* (python3)
+
+### Python
+Each cell is separate from others, so no variables are saved inbetween them.
