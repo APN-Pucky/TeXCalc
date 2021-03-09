@@ -6,6 +6,7 @@ Live rendered latex
 
 ## Requirements
 
+* java
 * lualatex (or latexmk, pdflatex, ...)
 * pdftoppm
 * (python3)
