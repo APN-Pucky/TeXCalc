@@ -11,5 +11,8 @@ Live rendered latex
 * pdftoppm
 * (python3)
 
+### LaTeX
+Is run in preview standalone mode for displaying cells.
+
 ### Python
 Each cell is separate from others, so no variables are saved inbetween them.
