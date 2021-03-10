@@ -7,8 +7,9 @@ Live rendered latex
 ## Requirements
 
 * java
-* lualatex (or latexmk, pdflatex, ...)
-* pdftoppm
+* tex-live
+  * lualatex (or latexmk, pdflatex, ...)
+  * pdftoppm
 * (python3)
 
 ### LaTeX
