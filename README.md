@@ -10,7 +10,7 @@ Live rendered latex
 * tex-live
   * lualatex (or latexmk, pdflatex, ...)
   * pdftoppm
-* (python3)
+* (python3/Anaconda)
 
 ### LaTeX
 Is run in preview standalone mode for displaying cells.
