@@ -79,8 +79,8 @@ public class Main {
 		refreshTabs();
 		
 		jframe.setResizable(true);
-		jframe.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-		jframe.setUndecorated(true);
+		//jframe.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		//jframe.setUndecorated(true);
 		jframe.setVisible(true);
 		jframe.pack();
 		jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
