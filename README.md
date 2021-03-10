@@ -7,7 +7,7 @@ Live rendered latex
 ## Requirements
 
 * java
-* ![tex-live](https://www.tug.org/texlive/acquire-netinstall.html)
+* ![tex-live](https://www.tug.org/texlive/acquire-netinstall.html) comes with needed:
   * lualatex (or latexmk, pdflatex, ...)
   * pdftoppm
 * (python3/Anaconda)
