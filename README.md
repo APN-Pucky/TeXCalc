@@ -7,9 +7,13 @@ Live rendered latex
 ## Requirements
 
 * java
-* lualatex (or latexmk, pdflatex, ...)
-* pdftoppm
-* (python3)
+* ![tex-live](https://www.tug.org/texlive/acquire-netinstall.html) comes with needed:
+  * lualatex (or latexmk, pdflatex, ...)
+  * pdftoppm
+* (python3/Anaconda)
+
+### LaTeX
+Is run in preview standalone mode for displaying cells.
 
 ### Python
 Each cell is separate from others, so no variables are saved inbetween them.
