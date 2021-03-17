@@ -1,4 +1,4 @@
-package TeXCalc.latex.wrap.env.item;
+package TeXCalc.latex.environment.item;
 
 import TeXCalc.latex.wrap.Wrapper;
 

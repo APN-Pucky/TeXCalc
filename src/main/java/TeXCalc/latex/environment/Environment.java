@@ -1,6 +1,6 @@
-package TeXCalc.latex.wrap.env;
+package TeXCalc.latex.environment;
 
-import TeXCalc.latex.wrap.DefaultTeXable;
+import TeXCalc.latex.DefaultTeXable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,8 +12,8 @@ public class Environment implements DefaultTeXable {
 	String end = "";
 	public Environment(String name) {
 		this.name = name;
-		setBegin("\\begin{" + name + "}");
-		setEnd("\\end{" + name + "}");
+		setBegin("\\begin{" + name + "}\n");
+		setEnd("\\end{" + name + "}\n");
 	}
 	@Override
 	public String to(String s) {

@@ -53,6 +53,7 @@ public class Latex {
 	public static String FRAMETOP = "\\usepackage{amsfonts}\n" + 
 			"\\usepackage{amsmath}\n" + 
 			"\\usepackage{amsthm}\n" + 
+			"\\usepackage{markdown}\n" + 
 			"\\usepackage{slashed}\\usepackage[compat=1.1.0]{tikz-feynman}\n" + 
 			"\\DeclareMathOperator{\\Tr}{Tr}\\setlength\\parindent{0pt}\n" + 
 			"    \\usepackage[breakable]{tcolorbox}\n" + 
@@ -574,7 +575,7 @@ public class Latex {
 		Exec ex = new Exec("tex");
 		IO.writeFile(ex.getDirName() + filename + ".tex", latex);
 		pasteCache(ex.getDirName());
-		ex.exec(getEngine(),  "-halt-on-error",filename+ ".tex");
+		ex.exec(getEngine(),  "-halt-on-error","--shell-escape",filename+ ".tex");
 
 		File ret_file = new File(ex.getDirName() + File.separator +".."+ File.separator + filename+ ".pdf");
 		
@@ -767,5 +768,14 @@ public class Latex {
 	}
 	public static String end(String env) {
 		return "\\end{" + env + "}";
+	}
+	public void checkRequirements(String[] requirements) {
+		for(String r : requirements) {
+			if(!getTop().contains(r)) {
+				System.out.println("Required: " + r);
+				//TODO popup?
+			}
+		}
+		
 	}
 }

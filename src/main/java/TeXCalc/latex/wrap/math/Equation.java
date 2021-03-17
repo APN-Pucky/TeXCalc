@@ -1,8 +1,9 @@
-package TeXCalc.latex.wrap;
+package TeXCalc.latex.wrap.math;
 
 import java.util.regex.Pattern;
 
 import TeXCalc.latex.Latex;
+import TeXCalc.latex.wrap.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
 

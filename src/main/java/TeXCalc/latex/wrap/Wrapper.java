@@ -1,5 +1,6 @@
 package TeXCalc.latex.wrap;
 
+import TeXCalc.latex.TeXable;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,4 +1,6 @@
-package TeXCalc.latex.wrap;
+package TeXCalc.latex.wrap.math;
+
+import TeXCalc.latex.wrap.Wrapper;
 
 public class Math extends Wrapper{
 	public String to(String s )

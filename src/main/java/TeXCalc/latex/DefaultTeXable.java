@@ -1,4 +1,4 @@
-package TeXCalc.latex.wrap;
+package TeXCalc.latex;
 
 public interface DefaultTeXable extends TeXable{
 public String to(String s);

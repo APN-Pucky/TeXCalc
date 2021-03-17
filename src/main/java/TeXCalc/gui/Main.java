@@ -29,6 +29,7 @@ import com.github.weisj.darklaf.theme.DarculaTheme;
 import TeXCalc.compat.Compat;
 import TeXCalc.config.Config;
 import TeXCalc.util.Task;
+import de.neuwirthinformatik.Alexander.GitJarUpdate.Info;
 import de.neuwirthinformatik.Alexander.GitJarUpdate.Update;
 import lombok.Getter;
 import lombok.Setter;
@@ -60,9 +61,8 @@ public class Main {
 			e.printStackTrace();
 		}
 		if(!tf.exists() || !tf.isDirectory())tf.mkdir();
-		version = getClass().getPackage().getImplementationVersion();
-		version = version==null?"DEV":version;
-		jframe = new JFrame("TeXCalc");
+		version = Info.VERSION;
+		jframe = new JFrame("TeXCalc-" + Info.VERSION);
 		jframe.setLayout(new BorderLayout());
 
 		JMenuBar menubar = new JMenuBar();

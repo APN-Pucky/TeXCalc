@@ -45,7 +45,7 @@ dependencies {
     implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
 	implementation group: 'com.github.weisj', name: 'darklaf-core', version: '2.5.5'
 	
-	implementation 'com.github.APN-Pucky:GitJarUpdate:0.0.3'
+	implementation 'com.github.APN-Pucky:GitJarUpdate:0.0.4'
 }
 
 task fatJar(type: Jar) {

@@ -1,6 +1,5 @@
 package TeXCalc.gui;
 
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
@@ -16,25 +15,21 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import TeXCalc.config.Config;
-import TeXCalc.config.Default;
 import TeXCalc.latex.Latex;
-import TeXCalc.latex.wrap.Align;
-import TeXCalc.latex.wrap.DiffAlign;
-import TeXCalc.latex.wrap.DiffAlign2;
-import TeXCalc.latex.wrap.Equation;
-import TeXCalc.latex.wrap.Image;
-import TeXCalc.latex.wrap.Section;
-import TeXCalc.latex.wrap.SimpleDiffAlign;
-import TeXCalc.latex.wrap.SubSection;
-import TeXCalc.latex.wrap.SubSubSection;
-import TeXCalc.latex.wrap.TeXable;
+import TeXCalc.latex.TeXable;
+import TeXCalc.latex.command.Image;
+import TeXCalc.latex.command.Section;
+import TeXCalc.latex.command.SubSection;
+import TeXCalc.latex.command.SubSubSection;
+import TeXCalc.latex.environment.item.Enumerate;
+import TeXCalc.latex.environment.item.Itemize;
+import TeXCalc.latex.environment.item.Markdown;
 import TeXCalc.latex.wrap.Wrapper;
-import TeXCalc.latex.wrap.env.item.Enumerate;
-import TeXCalc.latex.wrap.env.item.Itemize;
+import TeXCalc.latex.wrap.math.Align;
+import TeXCalc.latex.wrap.math.Equation;
 import TeXCalc.python.Python;
 import lombok.Getter;
 import lombok.Setter;
-import org.fife.ui.rsyntaxtextarea.*;
 
 @JsonIgnoreProperties(ignoreUnknown=true)
 public class Cell{
@@ -43,9 +38,9 @@ public class Cell{
 	public static HashMap<String,TeXable> hm = new HashMap<String,TeXable>();
 	static {
 		hm.put("aligned",new Align());
-		hm.put("diffalign",new DiffAlign());
-		hm.put("diffalign2",new DiffAlign2());
-		hm.put("simplediffalign",new SimpleDiffAlign());
+		//hm.put("diffalign",new DiffAlign());
+		//hm.put("diffalign2",new DiffAlign2());
+		//hm.put("simplediffalign",new SimpleDiffAlign());
 		hm.put("equation",new Equation());
 		hm.put("latex",new Wrapper());
 		hm.put("section",new Section());
@@ -55,6 +50,7 @@ public class Cell{
 		hm.put("image",new Image());
 		hm.put("itemize",new Itemize());
 		hm.put("enumerate",new Enumerate());
+		hm.put("markdown",new Markdown());
 	}
 	//public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
 	//public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
@@ -144,6 +140,7 @@ public class Cell{
 		if(environment.contentEquals("image")) {
 			latex.cache(getText().split(" ")[0]);
 		}
+		latex.checkRequirements(hm.get(environment).getRequirements());
 		if(math) {
 			return hm.get(environment).toStandalone(getText());
 		}

@@ -1,4 +1,4 @@
-package TeXCalc.latex.wrap;
+package TeXCalc.latex.wrap.math;
 
 import TeXCalc.latex.Latex;
 
