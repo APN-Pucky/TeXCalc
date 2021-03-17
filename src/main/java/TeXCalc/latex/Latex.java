@@ -37,7 +37,7 @@ public class Latex {
 	public static boolean PRINT = false;
 	public static boolean TIME = false;
 	//public static String TEXENGINE = "lualatex";
-	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert,varwidth]{standalone}\n";
+	public static String TYPE_STANDALONE =  "\\documentclass[preview,crop,border=1pt,convert,varwidth=\\maxdimen]{standalone}\n";
 	public static String TYPE_DOCUMENT = "\\documentclass{article}\n";
 	/*public static String FRAMETOP =
 			"\\usepackage{amsfonts}\n"+

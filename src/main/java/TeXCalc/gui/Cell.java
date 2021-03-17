@@ -27,7 +27,10 @@ import TeXCalc.latex.wrap.Section;
 import TeXCalc.latex.wrap.SimpleDiffAlign;
 import TeXCalc.latex.wrap.SubSection;
 import TeXCalc.latex.wrap.SubSubSection;
+import TeXCalc.latex.wrap.TeXable;
 import TeXCalc.latex.wrap.Wrapper;
+import TeXCalc.latex.wrap.env.item.Enumerate;
+import TeXCalc.latex.wrap.env.item.Itemize;
 import TeXCalc.python.Python;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +40,7 @@ import org.fife.ui.rsyntaxtextarea.*;
 public class Cell{
 	
 	//public static final String[] envs = { "equation", "latex", "aligned", ""};
-	public static HashMap<String,Wrapper> hm = new HashMap<String,Wrapper>();
+	public static HashMap<String,TeXable> hm = new HashMap<String,TeXable>();
 	static {
 		hm.put("aligned",new Align());
 		hm.put("diffalign",new DiffAlign());
@@ -50,6 +53,8 @@ public class Cell{
 		hm.put("subsubsection",new SubSubSection());
 		hm.put("python",new Wrapper());
 		hm.put("image",new Image());
+		hm.put("itemize",new Itemize());
+		hm.put("enumerate",new Enumerate());
 	}
 	//public static final String[] begin = { Latex.begin("equation"), "", Latex.begin("equation")+Latex.begin("aligned"), ""};
 	//public static final String[] end = { Latex.end("equation"), "", Latex.end("aligned")+Latex.end("equation"), ""};
@@ -137,7 +142,7 @@ public class Cell{
 			return Python.toLatex(getText(),latex);
 		}
 		if(environment.contentEquals("image")) {
-			latex.cache(getText());
+			latex.cache(getText().split(" ")[0]);
 		}
 		if(math) {
 			return hm.get(environment).toStandalone(getText());

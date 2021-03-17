@@ -3,7 +3,7 @@ package TeXCalc.latex.wrap;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Wrapper {
+public class Wrapper implements TeXable{
 
 	@Getter @Setter
 	String begin = "";
