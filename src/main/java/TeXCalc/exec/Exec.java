@@ -29,10 +29,11 @@ public class Exec {
 	public String exec(String... args) {
 		System.out.println("Execute " + name +  " in " + dirName + "$ ./" + args[0]); 
 		ProcessBuilder pb = new ProcessBuilder(args);
+		Process p = null;
 		pb.directory(dir);
 		try {
 			long startTime = System.nanoTime();
-			Process p = pb.start();
+			p = pb.start();
 			StreamPrinter fluxErreur=null;
 				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), PRINT);
 				fluxErreur = new StreamPrinter(p.getErrorStream(), PRINT);
@@ -42,8 +43,12 @@ public class Exec {
 			if(exit==1)return fluxErreur.text;
 			long stopTime = System.nanoTime();
 			if(TIME)System.out.println((stopTime - startTime) / 1.e9 + " s");
-		} catch (IOException | InterruptedException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
+		}
+		catch(InterruptedException ie) {
+			System.out.println("stopped, due to outdated");
+			if(p!=null)p.destroyForcibly();
 		}
 		return "";
 	}
