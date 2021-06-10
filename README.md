@@ -1,4 +1,6 @@
 # TeXCalc
+![workflow](https://github.com/APN-Pucky/TeXCalc/actions/workflows/gradle_jar.yml/badge.svg)
+![downloads](https://img.shields.io/github/downloads/APN-Pucky/TeXCalc/total)
 
 Live rendered latex
 
