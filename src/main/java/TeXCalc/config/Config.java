@@ -1,5 +1,6 @@
 package TeXCalc.config;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,6 +37,7 @@ public class Config {
 	String backgroundColor = "#2f2f2f";
 	Integer numberOfLines = 6;
 	Integer widthOfLines = 100;
+	Boolean autoLeftRight = true;
 	
 	public void display() {
 		JFrame f = new JFrame();
@@ -63,6 +66,8 @@ public class Config {
 					j.add(link(GUI.area(field.get(this).toString()),field,this),c);
 				if(field.getType().getName().equals("java.lang.Integer"))
 					j.add(link(GUI.numericEdit((Integer)field.get(this)),field,this),c);
+				if(field.getType().getName().equals("java.lang.Boolean"))
+					j.add(link(GUI.check("",(Boolean)field.get(this)),field,this),c);
 			} catch (IllegalArgumentException  e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -101,8 +106,19 @@ ObjectMapper objectMapper = new ObjectMapper();
 		f.pack();
 		f.setVisible(true);
 	}
-	
-	public JTextComponent link(JTextComponent c,Field f,Object o)  {
+	public Component link(JCheckBox c,Field f,Object o) {
+		c.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				update(c,f,o);
+			}
+			
+		});
+		return c;
+	}
+	public Component link(JTextComponent c,Field f,Object o)  {
 		c.getDocument().addDocumentListener(new DocumentListener() {
 				public void changedUpdate(DocumentEvent e) {
 				    update(c,f,o);
@@ -116,6 +132,15 @@ ObjectMapper objectMapper = new ObjectMapper();
 		});
 		return c;
 	}
+	public void update(JCheckBox c, Field f,Object o) {
+		  if(f.getType().getName().equals("java.lang.Boolean"))
+			try {
+				f.set(o, c.isSelected());
+			}   catch (IllegalArgumentException | IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	  }
 	public void update(JTextComponent c, Field f,Object o) {
 					  if(f.getType().getName().equals("java.lang.String"))
 						try {
