@@ -13,9 +13,14 @@ Live rendered latex
   * lualatex (or latexmk, pdflatex, ...)
   * pdftoppm
 * (python3/Anaconda)
+* (math/Mathematica)
 
 ### LaTeX
 Is run in preview standalone mode for displaying cells.
 
 ### Python
 Each cell is separate from others, so no variables are saved inbetween them.
+
+### Mathematica
+Results/variables/definitions can be reused across cells.
+Standalone documentclass must be without "crop" and "varwidth".
