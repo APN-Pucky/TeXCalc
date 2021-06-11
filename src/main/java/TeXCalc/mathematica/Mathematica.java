@@ -35,6 +35,7 @@ public class Mathematica implements Code {
 			} catch (IOException e) {
 				String math = JOptionPane.showInputDialog("Please enter the path to your mathematica installation ($ whereis math)");
 				Config.current.setMathematicaPATH(math);
+				Config.current.save();
 				try {
 					inter = new Inter(Config.current.getMathematicaPATH());
 				} catch (IOException e1) {

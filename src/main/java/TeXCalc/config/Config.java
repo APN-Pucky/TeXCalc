@@ -89,17 +89,9 @@ public class Config {
 
 	        @Override
 	        public void actionPerformed(ActionEvent arg0) {
+	        	save();
 	            //saveText(areaText);
-ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			//ObjectNode r = objectMapper.createObjectNode();
-			//r.set("config", objectMapper.valueToTree(Config.current));
-			objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(System.getProperty("user.dir") +System.getProperty("file.separator")+ Config.configfile),Config.current);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-			f.dispose();
+	        	f.dispose();
 	        }
 	    });	
 	    j.add(saveButton,c);
@@ -107,6 +99,19 @@ ObjectMapper objectMapper = new ObjectMapper();
 		f.pack();
 		f.setVisible(true);
 	}
+	
+	public void save() {
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			//ObjectNode r = objectMapper.createObjectNode();
+			//r.set("config", objectMapper.valueToTree(Config.current));
+			objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(System.getProperty("user.dir") +System.getProperty("file.separator")+ Config.configfile),Config.current);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
+	
 	public Component link(JCheckBox c,Field f,Object o) {
 		c.addActionListener(new ActionListener() {
 
