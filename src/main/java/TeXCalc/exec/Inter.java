@@ -9,14 +9,9 @@ public class Inter {
 	public static final boolean PRINT = true;
 	ProcessBuilder pb;
 	Process p;
-	public Inter(String... command) {
+	public Inter(String... command) throws IOException {
 		pb = new ProcessBuilder(command);
-try {
 			p = pb.start();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	public String pr(String in) {
 		System.out.println("PR: " + in);

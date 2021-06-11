@@ -38,6 +38,7 @@ public class Config {
 	Integer numberOfLines = 6;
 	Integer widthOfLines = 100;
 	Boolean autoLeftRightBracket = true;
+	String mathematicaPATH  = "math";
 	
 	public void display() {
 		JFrame f = new JFrame();
