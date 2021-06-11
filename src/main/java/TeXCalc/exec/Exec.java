@@ -32,9 +32,6 @@ public class Exec {
 	public String exec(String... args) {
 		System.out.println("Execute " + name +  " in " + dirName + "$ ./" + args[0]); 
 		ProcessBuilder pb = new ProcessBuilder(args);
-		pb.redirectInput(new File("/dev/null"));
-		pb.redirectOutput(new File("/dev/null"));
-		pb.redirectError(new File("/dev/null"));
 		Process p = null;
 		pb.directory(dir);
 		try {
