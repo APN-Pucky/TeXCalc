@@ -24,3 +24,4 @@ Each cell is separate from others, so no variables are saved inbetween them.
 ### Mathematica
 Results/variables/definitions can be reused across cells.
 Standalone documentclass must be without "crop" and "varwidth".
+Also needs "\usepackage{mmacells}".
