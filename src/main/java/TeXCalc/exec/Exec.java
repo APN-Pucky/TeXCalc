@@ -2,6 +2,7 @@ package TeXCalc.exec;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.ProcessBuilder.Redirect;
 import java.util.UUID;
 
 import TeXCalc.latex.StreamPrinter;
@@ -17,9 +18,11 @@ public class Exec {
 	String dirName;
 	File dir;
 	String name;
-	
-	public Exec(String name) {
+	boolean forcestop;
+	public Exec(String name) {this(name,true);}
+	public Exec(String name,boolean forcestop) {
 		this.name = name;
+		this.forcestop = forcestop;
 		uuid = UUID.randomUUID().toString();
 		dirName = ".tmp" + File.separator + name + "_" + uuid + File.separator + name + File.separator;
 		dir = new File(dirName);
@@ -29,6 +32,9 @@ public class Exec {
 	public String exec(String... args) {
 		System.out.println("Execute " + name +  " in " + dirName + "$ ./" + args[0]); 
 		ProcessBuilder pb = new ProcessBuilder(args);
+		pb.redirectInput(new File("/dev/null"));
+		pb.redirectOutput(new File("/dev/null"));
+		pb.redirectError(new File("/dev/null"));
 		Process p = null;
 		pb.directory(dir);
 		try {
@@ -40,7 +46,7 @@ public class Exec {
 				Task.startUntracked(fluxSortie);
 				Task.startUntracked(fluxErreur);
 			int exit = p.waitFor();
-			if(exit==1)return fluxErreur.text;
+			if(exit==1) return fluxErreur.text;
 			long stopTime = System.nanoTime();
 			if(TIME)System.out.println((stopTime - startTime) / 1.e9 + " s");
 		} catch (IOException ex) {
@@ -48,7 +54,12 @@ public class Exec {
 		}
 		catch(InterruptedException ie) {
 			System.out.println("stopped, due to outdated");
-			if(p!=null)p.destroyForcibly();
+			if(p!=null) {
+				if(forcestop)
+					p.destroyForcibly();
+				//else
+					//p.destroy();
+			}
 		}
 		return "";
 	}

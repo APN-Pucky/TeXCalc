@@ -1,10 +1,11 @@
 package TeXCalc.latex.wrap;
 
+import TeXCalc.latex.DirectTeXable;
 import TeXCalc.latex.TeXable;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Wrapper implements TeXable{
+public class Wrapper implements DirectTeXable{
 
 	@Getter @Setter
 	String begin = "";

@@ -27,6 +27,7 @@ import TeXCalc.latex.environment.item.Markdown;
 import TeXCalc.latex.wrap.Wrapper;
 import TeXCalc.latex.wrap.math.Align;
 import TeXCalc.latex.wrap.math.Equation;
+import TeXCalc.mathematica.Mathematica;
 import TeXCalc.python.Python;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,11 +47,12 @@ public class Cell {
 		hm.put("section", new Section());
 		hm.put("subsection", new SubSection());
 		hm.put("subsubsection", new SubSubSection());
-		hm.put("python", new Wrapper());
+		hm.put("python", new Python());
 		hm.put("image", new Image());
 		hm.put("itemize", new Itemize());
 		hm.put("enumerate", new Enumerate());
 		hm.put("markdown", new Markdown());
+		hm.put("mathematica", new Mathematica());
 	}
 	// public static final String[] begin = { Latex.begin("equation"), "",
 	// Latex.begin("equation")+Latex.begin("aligned"), ""};
@@ -138,17 +140,14 @@ public class Cell {
 	public String toLatex(boolean stared, boolean math) {
 		if (getText().trim().equals(""))
 			return "";
-		if (environment.equals("python")) {
-			return Python.toLatex(getText(), latex);
-		}
-		if (environment.contentEquals("image")) {
+		if (environment.equals("image")) {
 			latex.cache(getText().split(" ")[0]);
 		}
 		latex.checkRequirements(hm.get(environment).getRequirements());
 		if (math) {
-			return hm.get(environment).toStandalone(getText());
+			return hm.get(environment).toStandalone(getText(),latex);
 		} else {
-			return hm.get(environment).toDocument(getText());
+			return hm.get(environment).toDocument(getText(),latex);
 		}
 		/*
 		 * String ret = ""; ret += begin[getEnvIndex(environment)] + "\n"; ret

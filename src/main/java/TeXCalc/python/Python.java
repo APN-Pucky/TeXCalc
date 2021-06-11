@@ -8,14 +8,17 @@ import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 
+import TeXCalc.code.Code;
 import TeXCalc.config.Config;
 import TeXCalc.exec.Exec;
 import TeXCalc.latex.Latex;
 import TeXCalc.latex.StreamPrinter;
+import TeXCalc.latex.TeXable;
+import TeXCalc.latex.wrap.Wrapper;
 import TeXCalc.util.IO;
 import TeXCalc.util.Task;
 
-public class Python{
+public class Python implements Code{
 	public static boolean PRINT = false;
 	public static boolean FULL = false;
 	public static boolean TIME = false;
@@ -62,7 +65,8 @@ public class Python{
 			"  \"nbformat_minor\": 4\n" + 
 			"}\n"; 
 	}
-	public static String toLatex(String py, Latex l) {
+	public static String toLatex(String s, Latex l) {return new Python().to(s,l);}
+	public String to(String py, Latex l) {
 		String filename = "tmp_jupyter_" + UUID.randomUUID().toString();
 		Exec ex = new Exec("jupyter");
 		//ex.writeFile(filename + ".py",py);

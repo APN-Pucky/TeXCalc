@@ -37,7 +37,7 @@ public class Config {
 	String backgroundColor = "#2f2f2f";
 	Integer numberOfLines = 6;
 	Integer widthOfLines = 100;
-	Boolean autoLeftRight = true;
+	Boolean autoLeftRightBracket = true;
 	
 	public void display() {
 		JFrame f = new JFrame();

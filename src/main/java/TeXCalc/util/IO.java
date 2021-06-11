@@ -3,14 +3,27 @@ package TeXCalc.util;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 public class IO {
+public static String loadFile(String name) {
+	 InputStream in = IO.class.getResourceAsStream("/"+name);
+	 try {
+		return IOUtils.toString(in, StandardCharsets.UTF_8.name());
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	 return "";
+}
 public static String readFile(String path)
 	{
 		byte[] encoded;
