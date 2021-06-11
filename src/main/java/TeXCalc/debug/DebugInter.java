@@ -1,10 +1,12 @@
 package TeXCalc.debug;
 
+import java.io.IOException;
+
 import TeXCalc.exec.Inter;
 import TeXCalc.util.IO;
 
 public class DebugInter {
-public static void main(String... args) {
+public static void main(String... args) throws IOException {
 	System.out.println("".matches("In\\[\\d+\\]:=.*"));
 	Inter i = new Inter("/home/apn/.local/bin/math");
 	System.out.println(i.input(IO.loadFile("run.m")));
