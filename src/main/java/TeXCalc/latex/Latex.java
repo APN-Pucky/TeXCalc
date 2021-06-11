@@ -531,7 +531,7 @@ public class Latex {
 		Iterator<String> it =filecache.keySet().iterator();
 		while(it.hasNext()) {
 			String f = it.next();
-			if(!cont.contains(f))it.remove();
+			if(!cont.contains(f.split("\\.")[0]))it.remove();
 		}
 	}
 	

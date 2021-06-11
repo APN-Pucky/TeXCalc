@@ -143,7 +143,8 @@ public class Main {
 		if( ef.exists() )
 		{
 		try {
-			FileUtils.cleanDirectory(ef);
+			FileUtils.deleteDirectory(ef);
+			//FileUtils.cleanDirectory(ef);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
