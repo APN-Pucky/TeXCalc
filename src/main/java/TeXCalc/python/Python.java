@@ -87,7 +87,7 @@ public class Python implements Code{
 					;
 			}
 		String s = ex.readFile(filename+ ".tex").split("maketitle")[1];
-		if(!FULL)s = s.substring(s.indexOf("\\end{tcolorbox}")+15);
+		if(!Config.current.getPython3().getShowCells().getValue())s = s.substring(s.indexOf("\\end{tcolorbox}")+15);
 		s = s.split("\\\\end\\{document\\}")[0];
 		
 		File jpd = new File(ex.getDirName() + filename + "_files");

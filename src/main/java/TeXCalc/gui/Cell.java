@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import TeXCalc.config.Config;
+import TeXCalc.latex.Auto;
 import TeXCalc.latex.Latex;
 import TeXCalc.latex.TeXable;
 import TeXCalc.latex.command.Image;
@@ -39,6 +40,7 @@ public class Cell {
 	public static HashMap<String, TeXable> hm = new HashMap<String, TeXable>();
 	static {
 		hm.put("aligned", new Align());
+		hm.put("auto", new Auto());
 		// hm.put("diffalign",new DiffAlign());
 		// hm.put("diffalign2",new DiffAlign2());
 		// hm.put("simplediffalign",new SimpleDiffAlign());

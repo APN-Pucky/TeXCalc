@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 public class LatexConfig extends SubConfig {
 	ConfString defaultEngine = new ConfString("lualatex");
-	ConfString environment = new ConfString("aligned");
+	ConfString environment = new ConfString("auto");
 	ConfBoolean autoLeftRightBracket =new ConfBoolean(true);
 	
 }

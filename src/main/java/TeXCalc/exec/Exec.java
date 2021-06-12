@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.util.UUID;
 
+import TeXCalc.config.Config;
 import TeXCalc.latex.StreamPrinter;
 import TeXCalc.util.IO;
 import TeXCalc.util.Task;
@@ -38,8 +39,8 @@ public class Exec {
 			long startTime = System.nanoTime();
 			p = pb.start();
 			StreamPrinter fluxErreur=null;
-				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), PRINT);
-				fluxErreur = new StreamPrinter(p.getErrorStream(), PRINT);
+				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(),Config.current.getDebug().getPrintOuput().getValue());
+				fluxErreur = new StreamPrinter(p.getErrorStream(), Config.current.getDebug().getPrintError().getValue());
 				Task.startUntracked(fluxSortie);
 				Task.startUntracked(fluxErreur);
 			int exit = p.waitFor();

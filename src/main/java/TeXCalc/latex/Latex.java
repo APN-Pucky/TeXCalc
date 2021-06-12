@@ -54,6 +54,7 @@ public class Latex {
 			"\\usepackage{amsmath}\n" + 
 			"\\usepackage{amsthm}\n" + 
 			"\\usepackage{markdown}\n" + 
+			"\\usepackage{mmacells}\n" + 
 			"\\usepackage{slashed}\\usepackage[compat=1.1.0]{tikz-feynman}\n" + 
 			"\\DeclareMathOperator{\\Tr}{Tr}\\setlength\\parindent{0pt}\n" + 
 			"    \\usepackage[breakable]{tcolorbox}\n" + 

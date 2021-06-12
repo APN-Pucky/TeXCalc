@@ -41,6 +41,9 @@ public class MainConfig extends Config{
 	MathematicaConfig math = new MathematicaConfig();
 	DebugConfig debug = new DebugConfig();
 	
+	@JsonIgnore
+	private HashMap<String,Object> postponed = new HashMap<String,Object>(); 
+
 	public void show() {
 		JFrame f = new JFrame();
 		JPanel j = new JPanel();
@@ -64,7 +67,7 @@ public class MainConfig extends Config{
 				}
 				else
 					{
-					System.out.println("unknown " + field.getType().getName());
+					//System.out.println("unknown " + field.getType().getName());
 					}
 			} catch (IllegalArgumentException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
@@ -113,8 +116,7 @@ public class MainConfig extends Config{
 		}	
 	}
 	
-	@JsonIgnore
-	private HashMap<String,Object> postponed = new HashMap<String,Object>(); 
+
 	@JsonAnySetter
 	public void setAnyValue(String key,Object value) {
 		postponed.put(key, value);
@@ -156,9 +158,8 @@ public class MainConfig extends Config{
 			e.printStackTrace();
 		}
         for(String s : current.postponed.keySet()) {
-        	System.out.println("Fixing: " + s);
+        	//System.out.println("Fixing: " + s);
         	Config.current.setValue(s, current.postponed.get(s));
         }
-        System.out.println(Config.current.getGui().getBackgroundColor());
 	}
 }

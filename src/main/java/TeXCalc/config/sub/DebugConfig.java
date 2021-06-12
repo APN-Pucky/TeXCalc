@@ -10,7 +10,8 @@ import lombok.Data;
 @JsonAutoDetect
 @Data
 public class DebugConfig extends SubConfig {
-	ConfBoolean printAll= new ConfBoolean(false);
+	ConfBoolean printOuput= new ConfBoolean(false);
+	ConfBoolean printError= new ConfBoolean(false);
 	ConfString logFile = new ConfString("texcalc.log");
 	//String ok = "";
 
