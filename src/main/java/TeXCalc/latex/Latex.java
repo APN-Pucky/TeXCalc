@@ -467,7 +467,7 @@ public class Latex {
 		
 		this.top = GUI.areaLatex(top);
 		this.end = GUI.areaLatex(end);
-		engine = GUI.area(Config.current.getDefaultEngine());
+		engine = GUI.area(Config.current.getLatex().getDefaultEngine());
 		standaloneType = GUI.areaLatex(TYPE_STANDALONE);
 		documentType = GUI.areaLatex(TYPE_DOCUMENT);
 

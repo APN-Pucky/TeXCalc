@@ -5,18 +5,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-public class Inter {
+public abstract class Inter {
 	public static final boolean PRINT = true;
-	ProcessBuilder pb;
-	Process p;
+	public ProcessBuilder pb;
+	public Process p;
 	public Inter(String... command) throws IOException {
 		pb = new ProcessBuilder(command);
-			p = pb.start();
+		p = pb.start();
 	}
-	public String pr(String in) {
-		System.out.println("PR: " + in);
-		return in;
-	}
+	public abstract String input(String in);
+	/*
 	public String input(String in) {
 		PrintWriter pr = new PrintWriter(p.getOutputStream());
 		pr.println(in);
@@ -61,4 +59,5 @@ public class Inter {
         }
      return text.replace("In\\[\\d+\\]:=","");
 	}
+	*/
 }

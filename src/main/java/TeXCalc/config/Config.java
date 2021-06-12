@@ -5,22 +5,20 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import TeXCalc.gui.GUI;
 import lombok.Data;
@@ -28,20 +26,22 @@ import lombok.Data;
 @JsonAutoDetect
 @Data
 public class Config {
-	public static Config current = new Config();
+	public static MainConfig current = new MainConfig();
 	public static final String configfile = "conf.json";
-	String python = "python3.7";
-	String defaultEngine = "lualatex";
-	String theme= "dark";
-	String environment = "aligned";
-	String backgroundColor = "#2f2f2f";
-	Integer numberOfLines = 6;
-	Integer widthOfLines = 100;
-	Boolean autoLeftRightBracket = true;
-	String mathematicaPATH  = "math";
+	@JsonIgnore
+	private JFrame f;
+	//String python = "python3.7";
+	//String defaultEngine = "lualatex";
+	//String theme= "dark";
+	//String environment = "aligned";
+	//String backgroundColor = "#2f2f2f";
+	//Integer numberOfLines = 6;
+	//Integer widthOfLines = 100;
+	//Boolean autoLeftRightBracket = true;
+	//String mathematicaPATH  = "math";
 	
-	public void display() {
-		JFrame f = new JFrame();
+	public void show() {
+		f = new JFrame();
 		JPanel j = new JPanel();
 		j.setLayout(new GridBagLayout());
 		int index = 0;
@@ -89,7 +89,7 @@ public class Config {
 
 	        @Override
 	        public void actionPerformed(ActionEvent arg0) {
-	        	save();
+	        	//save();
 	            //saveText(areaText);
 	        	f.dispose();
 	        }
@@ -98,18 +98,6 @@ public class Config {
 		f.add(new JScrollPane(j));
 		f.pack();
 		f.setVisible(true);
-	}
-	
-	public void save() {
-		ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			//ObjectNode r = objectMapper.createObjectNode();
-			//r.set("config", objectMapper.valueToTree(Config.current));
-			objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(System.getProperty("user.dir") +System.getProperty("file.separator")+ Config.configfile),Config.current);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
 	}
 	
 	public Component link(JCheckBox c,Field f,Object o) {
@@ -125,6 +113,7 @@ public class Config {
 		return c;
 	}
 	public Component link(JTextComponent c,Field f,Object o)  {
+		
 		c.getDocument().addDocumentListener(new DocumentListener() {
 				public void changedUpdate(DocumentEvent e) {
 				    update(c,f,o);
@@ -166,4 +155,38 @@ public class Config {
 							e.printStackTrace();
 						}
 				  }
+	
+	public void reset() {
+		for (Field field : this.getClass().getDeclaredFields())
+	        	{
+				field.setAccessible(true);
+						try {
+
+							if(field.get(this) instanceof Defaultable)
+								((Defaultable)field.get(this)).reset();
+							else
+								field.set(this, field.get(this.getClass().getDeclaredConstructor().newInstance()));
+						} catch (IllegalArgumentException | IllegalAccessException | InstantiationException
+								| InvocationTargetException | NoSuchMethodException | SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+	        	}
+	}
+	public void save_default() {
+		for (Field field : this.getClass().getDeclaredFields())
+	        	{
+				field.setAccessible(true);
+						try {
+
+							if(field.get(this) instanceof Defaultable)
+								((Defaultable)field.get(this)).setDefaultValue(((Valueable)field.get(this)).getValue());;
+						} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+
+	        	}
+	}
 }

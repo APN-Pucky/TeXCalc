@@ -65,7 +65,7 @@ public class Cell {
 
 	@Getter
 	@Setter
-	protected String environment = Config.current.getEnvironment();
+	protected String environment = Config.current.getLatex().getEnvironment();
 
 	@Getter
 	@Setter
@@ -92,7 +92,7 @@ public class Cell {
 		// environment = e;
 		// icon = new JLabel();
 		// text = new JTextArea(stext,5,80);
-		text = GUI.areaLatex(stext, Config.current.getNumberOfLines(), Config.current.getWidthOfLines());
+		text = GUI.areaLatex(stext, Config.current.getGui().getNumberOfLines(), Config.current.getGui().getWidthOfLines());
 		// axTextArea rs = new RSyntaxTextArea(stext,5,100);
 		// rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		// rs.setHighlightCurrentLine(false);

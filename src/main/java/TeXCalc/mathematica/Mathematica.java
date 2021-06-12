@@ -1,7 +1,10 @@
 package TeXCalc.mathematica;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import javax.swing.JOptionPane;
 
@@ -17,6 +20,7 @@ public class Mathematica implements Code {
 	public static Inter inter = null;
 
 	public Mathematica() {
+		super();
 		requirePackage("mmacells");
 	}
 
@@ -31,13 +35,13 @@ public class Mathematica implements Code {
 		if (inter == null) {
 
 			try {
-				inter = new Inter(Config.current.getMathematicaPATH());
+				inter = new MathematicaInter(Config.current.getMath().getMathematicaPATH());
 			} catch (IOException e) {
 				String math = JOptionPane.showInputDialog("Please enter the path to your mathematica installation ($ whereis math)");
-				Config.current.setMathematicaPATH(math);
+				Config.current.getMath().setMathematicaPATH(math);
 				Config.current.save();
 				try {
-					inter = new Inter(Config.current.getMathematicaPATH());
+					inter = new MathematicaInter(Config.current.getMath().getMathematicaPATH());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -58,5 +62,63 @@ public class Mathematica implements Code {
 			return inter.input("NBEval[\"" + ex.getDirName() + "tmp.m\"" + "]");
 		}
 	}
+	public static class MathematicaInter extends Inter {
+		public boolean unlicensed = false;
+	public MathematicaInter(String... command) throws IOException {
+			super(command);
+		}
+
+	public String input(String in) {
+		if(unlicensed)return "unlicensed";
+		PrintWriter pr = new PrintWriter(p.getOutputStream());
+		pr.println(in);
+		pr.flush();
+		BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+        String ligne = "";
+        String text = "";
+        boolean reset = false;
+        char[] c = new char[1];
+        while(true) {
+        	try {
+				br.read(c,0,1);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	//System.out.print(c[0]);
+        	text += c[0];
+        	//System.out.println(text);
+        	String[] ar;
+        	if(text.contains("\n")) {
+        		ar = text.split("\n");
+        		if(ar.length == 0)
+        			ar = new String[] {""};
+        	}
+        	else {
+        		ar = new String[] {text};
+        	}
+        	if(ar[ar.length-1].matches(".*activation key.*")) {
+        		unlicensed = true;
+        		return "unlicensed";
+        	}
+        	if(ar[ar.length-1].matches(".*Out\\[\\d+\\]=.*")) {
+        		//System.out.println("RESET");
+        		text = "";
+        		reset= true;
+        	}
+        	if(reset && ar[ar.length-1].matches(".*In\\[\\d+\\]:=.*")) {
+        		//System.out.println("BREAK");
+        		text ="";
+        		for(int i =0; i < ar.length-2;++i) {
+        			text += ar[i] + "\n";
+        		}
+        		break;
+        	}
+        }
+     return text.replace("In\\[\\d+\\]:=","");
+	}
+	
+	}
+
 
 }

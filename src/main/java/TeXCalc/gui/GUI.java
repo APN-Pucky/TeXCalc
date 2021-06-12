@@ -56,7 +56,7 @@ public class GUI {
 		     static {
 		    	 try {
 					theme = Theme.load(GUI.class.getResourceAsStream(
-					   "/org/fife/ui/rsyntaxtextarea/themes/" + Config.current.getTheme() + ".xml"));
+					   "/org/fife/ui/rsyntaxtextarea/themes/" + Config.current.getGui().getTheme() + ".xml"));
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -96,7 +96,7 @@ public class GUI {
 	public static JTextArea areaLatex(String s, int w, int h) {
 		RSyntaxTextArea rs = new RSyntaxTextArea(s,w,h);
 		theme.apply(rs);
-		rs.setBackground(Color.decode(Config.current.getBackgroundColor()));
+		rs.setBackground(Color.decode(Config.current.getGui().getBackgroundColor()));
 		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		rs.setHighlightCurrentLine(false);
 
@@ -107,7 +107,7 @@ public class GUI {
 	public static JTextArea areaLatex(String s) {
 		RSyntaxTextArea rs = new RSyntaxTextArea(s);
 		theme.apply(rs);
-		rs.setBackground(Color.decode(Config.current.getBackgroundColor()));
+		rs.setBackground(Color.decode(Config.current.getGui().getBackgroundColor()));
 		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		rs.setHighlightCurrentLine(false);
 
