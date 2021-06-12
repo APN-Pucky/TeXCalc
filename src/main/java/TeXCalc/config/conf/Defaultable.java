@@ -1,4 +1,4 @@
-package TeXCalc.config;
+package TeXCalc.config.conf;
 
 import lombok.Getter;
 import lombok.Setter;

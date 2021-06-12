@@ -1,4 +1,4 @@
-package TeXCalc.config;
+package TeXCalc.config.conf;
 
 import java.util.ArrayList;
 

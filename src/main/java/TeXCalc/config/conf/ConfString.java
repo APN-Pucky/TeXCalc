@@ -1,4 +1,4 @@
-package TeXCalc.config;
+package TeXCalc.config.conf;
 
 import java.awt.Component;
 
@@ -42,7 +42,5 @@ public class ConfString extends ConfElement<String>{
 				);
 		}
 		return jt;
-
 	}
-
 }

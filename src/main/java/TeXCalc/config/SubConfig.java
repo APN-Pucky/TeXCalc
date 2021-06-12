@@ -14,6 +14,7 @@ import javax.swing.JScrollPane;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
+import TeXCalc.config.conf.Displayable;
 import TeXCalc.gui.GUI;
 import lombok.Data;
 
@@ -67,7 +68,7 @@ public class SubConfig extends Config implements Displayable{
 				if(field.getType().getName().equals("java.lang.Boolean"))
 					j.add(link(GUI.check("",(Boolean)field.get(this)),field,this),c);
 				if(field.get(this) instanceof Displayable)
-					j.add(((Displayable)field.get(this)).display());
+					j.add(((Displayable)field.get(this)).display(),c);
 			} catch (IllegalArgumentException  e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -91,7 +92,18 @@ public class SubConfig extends Config implements Displayable{
 	        	reset();
 	        }
 	    });	
-	    j.add(resetButton,c);
+		JButton defButton = new JButton("Save default");
+	    defButton.addActionListener(new ActionListener() {
+
+	        @Override
+	        public void actionPerformed(ActionEvent arg0) {
+	        	save_default();
+	        }
+	    });	
+	    JPanel tmp = new JPanel();
+	    tmp.add(resetButton);
+	    tmp.add(defButton);
+	    j.add(tmp,c);
 		
 		return new JScrollPane(j);
 	}

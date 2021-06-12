@@ -35,13 +35,13 @@ public class Mathematica implements Code {
 		if (inter == null) {
 
 			try {
-				inter = new MathematicaInter(Config.current.getMath().getMathematicaPATH());
+				inter = new MathematicaInter(Config.current.getMath().getMathematicaPATH().getValue());
 			} catch (IOException e) {
 				String math = JOptionPane.showInputDialog("Please enter the path to your mathematica installation ($ whereis math)");
-				Config.current.getMath().setMathematicaPATH(math);
+				Config.current.getMath().getMathematicaPATH().setValue(math);
 				Config.current.save();
 				try {
-					inter = new MathematicaInter(Config.current.getMath().getMathematicaPATH());
+					inter = new MathematicaInter(Config.current.getMath().getMathematicaPATH().getValue());
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

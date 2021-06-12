@@ -50,7 +50,7 @@ public class Main {
 	
 	public Main() {
 		//FlatLaf.install(new FlatLightLaf());
-		if(Config.current.getGui().getTheme().equals("dark"))LafManager.install(new DarculaTheme());
+		if(Config.current.getGui().getTheme().getValue().equals("dark"))LafManager.install(new DarculaTheme());
 				//GUI.setUIFont (new javax.swing.plaf.FontUIResource("Serif",Font.BOLD,15));
 
 		Update.loadUpdate("TeXCalc-all.jar", "APN-Pucky", "TeXCalc");
@@ -232,15 +232,7 @@ public class Main {
 	}
 	
 	public static void loadConfig() {
-		ObjectMapper objectMapper = new ObjectMapper();
-        try {
-        	Config.current = objectMapper.readValue(new File(System.getProperty("user.dir") +System.getProperty("file.separator")+ Config.configfile), MainConfig.class);
-        }
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+		Config.current.load();
 	}
 
 	public void load() {

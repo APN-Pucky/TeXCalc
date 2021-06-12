@@ -20,6 +20,8 @@ import javax.swing.text.JTextComponent;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import TeXCalc.config.conf.Defaultable;
+import TeXCalc.config.conf.Valueable;
 import TeXCalc.gui.GUI;
 import lombok.Data;
 

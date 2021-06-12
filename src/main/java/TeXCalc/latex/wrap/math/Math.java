@@ -6,7 +6,7 @@ import TeXCalc.latex.wrap.Wrapper;
 public class Math extends Wrapper{
 	public String to(String s )
 	{
-		if(Config.current.getLatex().getAutoLeftRightBracket()) {
+		if(Config.current.getLatex().getAutoLeftRightBracket().getValue()) {
 			s = s.replaceAll("\\(", "\\\\left(");
 			s = s.replaceAll("\\)", "\\\\right)");
 		}

@@ -96,7 +96,7 @@ public class GUI {
 	public static JTextArea areaLatex(String s, int w, int h) {
 		RSyntaxTextArea rs = new RSyntaxTextArea(s,w,h);
 		theme.apply(rs);
-		rs.setBackground(Color.decode(Config.current.getGui().getBackgroundColor()));
+		rs.setBackground(Color.decode(Config.current.getGui().getBackgroundColor().getValue()));
 		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		rs.setHighlightCurrentLine(false);
 
@@ -107,7 +107,7 @@ public class GUI {
 	public static JTextArea areaLatex(String s) {
 		RSyntaxTextArea rs = new RSyntaxTextArea(s);
 		theme.apply(rs);
-		rs.setBackground(Color.decode(Config.current.getGui().getBackgroundColor()));
+		rs.setBackground(Color.decode(Config.current.getGui().getBackgroundColor().getValue()));
 		rs.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_LATEX);
 		rs.setHighlightCurrentLine(false);
 

@@ -1,4 +1,4 @@
-package TeXCalc.config;
+package TeXCalc.config.conf;
 
 public interface Valueable<T> {
 	public T getValue();

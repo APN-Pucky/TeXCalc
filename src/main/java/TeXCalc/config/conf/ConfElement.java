@@ -1,4 +1,4 @@
-package TeXCalc.config;
+package TeXCalc.config.conf;
 
 import java.awt.Component;
 
@@ -21,6 +21,11 @@ public abstract class ConfElement<T> implements Displayable,Defaultable<T>
 	public void setValue(T v) {
 		this.value = v;
 		value_to_gui();
+	}
+	
+	
+	public String toString() {
+		return ""+value;
 	}
 
 }
