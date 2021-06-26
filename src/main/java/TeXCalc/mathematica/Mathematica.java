@@ -59,7 +59,7 @@ public class Mathematica implements Code {
 			ex.writeFile("tmp.m", math);
 			ex.writeFile("mmacells.sty", mmacells);
 			l.cache("mmacells.sty", new File(ex.getDirName() + "mmacells.sty"));
-			return inter.input("NBEval[\"" + ex.getDirName() + "tmp.m\"" + "]");
+			return inter.input("NBEval[\"" + ex.getDirName() + "tmp.m\"" + "]").replaceAll("\\s*\\\\\\s*\n*\\s*\n*\\s*>\\s*", "");
 		}
 	}
 	public static class MathematicaInter extends Inter {

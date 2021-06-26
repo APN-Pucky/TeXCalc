@@ -1,6 +1,7 @@
 package TeXCalc.latex;
 
 import TeXCalc.latex.environment.Environment;
+import TeXCalc.latex.environment.item.Markdown;
 import TeXCalc.latex.wrap.math.Align;
 import TeXCalc.latex.wrap.math.Equation;
 import TeXCalc.mathematica.Mathematica;
@@ -23,6 +24,10 @@ public class Auto implements TeXable{
 		if(s.contains("import") || s.contains("print("))
 		{
 			return new Python();
+		}
+		if(s.contains("#"))
+		{
+			return new Markdown();
 		}
 		
 		return new Equation();
