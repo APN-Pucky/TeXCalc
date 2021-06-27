@@ -49,6 +49,7 @@ public class CellList
 	@Setter
 	private Latex latex;
 
+	/*
 	@JsonIgnore
 	public String FRAMETOP =
 			"\\usepackage{amsfonts}\n"+
@@ -61,6 +62,7 @@ public class CellList
 			"\\begin{document}\n";
 	@JsonIgnore
 	public String FRAMEEND = "\\end{document}\n";
+	*/
 	
 	public CellList(Cell[] cells) {
 		this();
@@ -98,10 +100,19 @@ public class CellList
 			c.queueUpdate();
 	}
 	
+	public void updateFrom(Cell c) {
+		if(cells.indexOf(c) < cells.size()-2)
+		{
+			final Cell c2 = cells.get(cells.indexOf(c)+1);
+			c2.queueUpdate(() -> {});
+		}
+	}
+	
 	public void link(int index) {
 
 		Cell cell = cells.get(index);
 		cell.setLatex(latex);
+		cell.setList(this);
 		
 		JToolBar tools = new JToolBar(JToolBar.HORIZONTAL);
 		tools.setFloatable(false);

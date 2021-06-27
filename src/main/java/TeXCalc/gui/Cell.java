@@ -69,10 +69,19 @@ public class Cell {
 	@Setter
 	protected String environment = Config.current.getLatex().getEnvironment().getValue();
 
+	
 	@Getter
 	@Setter
 	@JsonIgnore
 	protected Latex latex;
+	
+	
+	@Getter
+	@Setter
+	@JsonIgnore
+	protected CellList list;
+	
+	
 
 	private boolean updating = false, reupdate = false;
 
@@ -158,8 +167,12 @@ public class Cell {
 		 * ret.replaceAll(Pattern.quote(Latex.end("equation")), "\\$"); } return ret;
 		 */
 	}
-
+	
 	public void queueUpdate() {
+		queueUpdate(()->{});
+	}
+
+	public void queueUpdate(Runnable callback) {
 		final long millis = System.currentTimeMillis();
 		if(cur !=null)cur.interrupt();
 		(cur = new Thread(() -> {
@@ -174,6 +187,7 @@ public class Cell {
 					reupdate = false;
 					updating = true;
 					new Thread(() -> update(fimg, millis)).start();
+					new Thread(callback).start();
 				}
 			}
 		})).start();
@@ -198,8 +212,16 @@ public class Cell {
 		// synchronized(this)
 		{
 			updating = false;
-			if (reupdate)
+			if (reupdate) {
 				queueUpdate();
+			}
+			else if (Config.current.getMath().getExecuteSubsequent().getValue() && (environment.equals("mathematica") || environment.equals("auto"))
+					 // || Config.current.getPython().getExecuteSubsequent() && environment.equals("python")
+					){
+				// queue updates on cells after this
+				list.updateFrom(this);
+				
+			}
 		}
 	}
 
