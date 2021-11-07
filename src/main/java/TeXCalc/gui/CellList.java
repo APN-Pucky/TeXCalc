@@ -1,6 +1,5 @@
 package TeXCalc.gui;
 
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -13,6 +12,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import TeXCalc.latex.Latex;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +31,7 @@ public class CellList
 {
 	@JsonIgnore
 	@Getter
-	private JPanel panel;
+	public JPanel panel;
 	@JsonIgnore
 	@Getter
 	private GroupLayout layout;
@@ -39,7 +41,7 @@ public class CellList
 	@JsonSerialize(as=ArrayList.class, contentAs=Cell.class)
 	public ArrayList<Cell> cells = new ArrayList<Cell>();
 	@JsonIgnore
-	private HashMap<Cell,JPanel> barmap= new HashMap<Cell,JPanel>();
+	private HashMap<Cell,Cell.Bar> barmap= new HashMap<Cell,Cell.Bar>();
 	
 
 	//@JsonValue
@@ -99,6 +101,8 @@ public class CellList
 		}
 	}
 	
+	
+	
 	public void linkAll() {
 		for(int i =0 ; i  < cells.size(); ++i)
 		{
@@ -128,7 +132,7 @@ public class CellList
 		
 		JToolBar tools = new JToolBar(JToolBar.HORIZONTAL);
 		tools.setFloatable(false);
-		addButtons(tools,cell);
+		Cell.Bar b = cell.addButtons(tools);
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
@@ -141,11 +145,12 @@ public class CellList
 		///*
 		
 		
-		
-		tmpp.add(new JScrollPane(cell.text
+		JScrollPane js = new JScrollPane(cell.text
 				,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-				));
+				);
+		
+		tmpp.add(js);
 				//*/
 
 		ParallelGroup p = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
@@ -161,7 +166,8 @@ public class CellList
 		//GUI.log.m(cell.getText()+ (cell.getLatex()==null));
 		//panel.add(cell.icon, c);
 		//panel.setPreferredSize(new Dimension(1000,200));
-		barmap.put(cell, tmpp);	
+		b.setPanel(tmpp);
+		barmap.put(cell, b);	
 		
 	}
 	protected void unlinkAll() {
@@ -200,47 +206,8 @@ public class CellList
 		linkAll();
 		re();
 	}
-	protected void addButtons(JToolBar toolBar,Cell c) {
-		JButton button = null;
-		JPanel toolBarp = new JPanel();
-
-		
-		JComboBox<String> petList = new JComboBox<String>(Cell.hm.keySet().toArray(new String[Cell.hm.keySet().size()]));
-		toolBarp.add(petList);
-		
-		petList.setSelectedItem(c.getEnvironment());	
-		
-		petList.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent event) {
-			       if (event.getStateChange() == ItemEvent.SELECTED) {
-			          String item = (String) event.getItem();
-			          // do something with object
-			          c.setEnvironment(item);
-			          c.queueUpdate();
-			       }
-			    }   
-		});
-		//toolBar.add(toolBarp);
 	
-		button = GUI.buttonSync("Append", () -> {increase(cells.indexOf(c)+1);});
-		toolBarp.add(button);	
 
-		button = GUI.buttonSync("Up", () -> up(c));
-		toolBarp.add(button);
-		button = GUI.buttonSync("Down", () -> down(c));
-		toolBarp.add(button);
-
-		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(panel,"Clean","Clean") ){c.setText(""); c.queueUpdate();}});
-		toolBarp.add(button);
-		
-		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(panel,"RM","RM") ){unlink(c);cells.remove(cells.indexOf(c));panel.revalidate();panel.repaint();}});
-		toolBarp.add(button);	
-
-		
-
-		toolBar.add(toolBarp);
-
-	}
 	
 	public void unlink(Cell c) {
 		unlink(cells.indexOf(c));
@@ -249,8 +216,8 @@ public class CellList
 		Cell cell = cells.get(index);
 		//panel.remove(cell.text);
 		panel.remove(cell.icon);
-		if(barmap.get(cell) != null)
-			panel.remove(barmap.get(cell));
+		if(barmap.get(cell)!= null)
+			panel.remove(barmap.get(cell).panel);
 		barmap.remove(cell);
 	}
 	
@@ -282,7 +249,10 @@ public class CellList
 		ret+= latex.getTop();
 		for(Cell c : cells)
 		{
-			ret += c.toLatex() + "\n";
+			if(barmap.get(c).export.isSelected())
+			{
+				ret += c.toLatex() + "\n";
+			}
 		}
 		ret+= latex.getEnd();
 		return ret;

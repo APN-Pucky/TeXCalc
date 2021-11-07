@@ -1,13 +1,20 @@
 package TeXCalc.gui;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JToolBar;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +38,8 @@ import TeXCalc.latex.wrap.math.Equation;
 import TeXCalc.mathematica.Mathematica;
 import TeXCalc.python.Python;
 import TeXCalc.util.StringUtils;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -63,6 +72,7 @@ public class Cell {
 	// Latex.end("aligned")+Latex.end("equation"), ""};
 
 	protected JTextArea text;
+	protected JCheckBox export= GUI.check("export");
 	protected JLabel icon = new JLabel();
 	private Thread cur = null;
 
@@ -86,6 +96,13 @@ public class Cell {
 
 	private boolean updating = false, reupdate = false;
 
+	@Data
+	@AllArgsConstructor
+	static class Bar {
+		JPanel panel;
+		JCheckBox export;
+	}
+	
 	public Cell() {
 		this("");
 	}
@@ -114,13 +131,11 @@ public class Cell {
 		text.setLineWrap(true);
 		// text.setPreferredSize(new Dimension(150,100));
 		// text.setLineWrap(true);
-		Cell t = this;
 		text.addKeyListener((new KeyListener() {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				text.setRows(StringUtils.count(text.getText(), '\n', 0)+3);
-				list.re();
+				re();
 				queueUpdate();
 			}
 
@@ -135,12 +150,72 @@ public class Cell {
 		}));
 		queueUpdate();
 	}
+	public void re() {
+		int i = 3;
+		for(String s : text.getText().split("\n")) {
+			i += s.length() / text.getColumns();
+		}
+		text.setRows(StringUtils.count(text.getText(), '\n', 0)+i);
+		list.re();
+	}
 	public String getText() {
 		return text.getText();
 	}
 
 	public void setText(String text) {
 		this.text.setText(text);
+	}
+	public boolean getExport() {
+		return export.isSelected();
+	}
+	public void setExport(boolean exp) {
+		export.setSelected(exp);
+	}
+	
+	protected Bar addButtons(JToolBar toolBar) {
+		Cell c = this;
+		JButton button = null;
+		JPanel toolBarp = new JPanel();
+
+		
+		JComboBox<String> petList = new JComboBox<String>(Cell.hm.keySet().toArray(new String[Cell.hm.keySet().size()]));
+		toolBarp.add(petList);
+		
+		petList.setSelectedItem(c.getEnvironment());	
+		
+		petList.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent event) {
+			       if (event.getStateChange() == ItemEvent.SELECTED) {
+			          String item = (String) event.getItem();
+			          // do something with object
+			          c.setEnvironment(item);
+			          c.queueUpdate();
+			       }
+			    }   
+		});
+		//toolBar.add(toolBarp);
+		//export ;
+		toolBarp.add(export);
+		button = GUI.buttonSync("Append", () -> {list.increase(list.cells.indexOf(c)+1);});
+		toolBarp.add(button);	
+
+
+		button = GUI.buttonSync("Up", () -> list.up(c));
+		toolBarp.add(button);
+		button = GUI.buttonSync("Down", () -> list.down(c));
+		toolBarp.add(button);
+		button = GUI.buttonSync("Clean", () -> {if (c.getText().equals("") || GUI.confirm(list.panel,"Clean","Clean") ){c.setText(""); c.queueUpdate();}});
+		toolBarp.add(button);
+
+		
+		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(list.panel,"RM","RM") ){list.unlink(c);list.cells.remove(list.cells.indexOf(c));list.panel.revalidate();list.panel.repaint();}});
+		toolBarp.add(button);	
+
+		
+
+		toolBar.add(toolBarp);
+
+		return new Bar(null,export);
 	}
 
 	public String toLatex() {
@@ -209,6 +284,7 @@ public class Cell {
 				}
 				ImageIcon icon2 = new ImageIcon(img);
 				icon.setIcon(icon2);
+				re();
 
 			}
 		}

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import TeXCalc.config.conf.ConfElement;
 import TeXCalc.config.sub.DebugConfig;
 import TeXCalc.config.sub.GUIConfig;
+import TeXCalc.config.sub.HotkeyConfig;
 import TeXCalc.config.sub.LatexConfig;
 import TeXCalc.config.sub.MathematicaConfig;
 import TeXCalc.config.sub.PythonConfig;
@@ -40,6 +41,7 @@ public class MainConfig extends Config{
 	PythonConfig python3 = new PythonConfig();
 	MathematicaConfig math = new MathematicaConfig();
 	DebugConfig debug = new DebugConfig();
+	HotkeyConfig hotkey = new HotkeyConfig();
 	
 	@JsonIgnore
 	private HashMap<String,Object> postponed = new HashMap<String,Object>(); 

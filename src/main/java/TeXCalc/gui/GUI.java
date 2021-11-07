@@ -125,7 +125,7 @@ public class GUI {
 	{
 		JTextArea r = new JTextArea(msg);
 		r.setLineWrap(true);
-		r.setRows(2);
+		//r.setRows(1);
 		return r;
 	}
 	

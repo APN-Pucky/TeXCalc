@@ -1,7 +1,8 @@
 package TeXCalc.gui;
 
 import java.awt.BorderLayout;
-import java.awt.ScrollPane;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +31,7 @@ import com.github.weisj.darklaf.theme.DarculaTheme;
 
 import TeXCalc.compat.Compat;
 import TeXCalc.config.Config;
+import TeXCalc.util.HotKey;
 import TeXCalc.util.Task;
 import de.neuwirthinformatik.Alexander.GitJarUpdate.Info;
 import de.neuwirthinformatik.Alexander.GitJarUpdate.Update;
@@ -73,7 +75,12 @@ public class Main {
 		menubar.add(menu);
 		
 		JToolBar toolBar = new JToolBar("Still draggable");
-		addButtons(toolBar);
+		try {
+			addButtons(toolBar);
+		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 
 
@@ -88,6 +95,8 @@ public class Main {
 		jframe.pack();
 		jframe.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		load(tmp_save);
+		
+
 		
 		Task.startUntracked(() -> {
 			while(true) {
@@ -110,7 +119,7 @@ public class Main {
 		jframe.add(tp);
 	}
 
-	protected void addButtons(JToolBar toolBar) {
+	protected void addButtons(JToolBar toolBar) throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		JButton button = null;
 		
 		savename = GUI.text("save.json",true,100);
@@ -130,6 +139,7 @@ public class Main {
 		toolBar.add(button);
 
 		button = GUI.buttonAsync("Refresh", () -> update());
+		button.setMnemonic(KeyEvent.class.getField("VK_" + Config.current.getHotkey().getRefresh().getValue()).getInt(null));
 		toolBar.add(button);
 
 		button = GUI.buttonAsync("Add Cell", () -> addCell());

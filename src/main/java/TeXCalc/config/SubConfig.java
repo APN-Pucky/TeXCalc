@@ -9,8 +9,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
@@ -21,6 +23,8 @@ import lombok.Data;
 @JsonAutoDetect
 @Data
 public class SubConfig extends Config implements Displayable{
+	public String info ="";
+
 	public Component display() {
 
 		JPanel j = new JPanel();
