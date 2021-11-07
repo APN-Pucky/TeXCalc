@@ -215,7 +215,7 @@ public class Cell {
 			if (reupdate) {
 				queueUpdate();
 			}
-			else if (Config.current.getMath().getExecuteSubsequent().getValue() && (environment.equals("mathematica") || environment.equals("auto"))
+			else if (Config.current.getMath().getExecuteSubsequent().getValue() && (environment.equals("mathematica") /*|| environment.equals("auto") */)
 					 // || Config.current.getPython().getExecuteSubsequent() && environment.equals("python")
 					){
 				// queue updates on cells after this

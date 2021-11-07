@@ -13,5 +13,6 @@ public class LatexConfig extends SubConfig {
 	ConfString defaultEngine = new ConfString("lualatex");
 	ConfString environment = new ConfString("auto");
 	ConfBoolean autoLeftRightBracket =new ConfBoolean(true);
+	ConfBoolean autoLeftRightAbs = new ConfBoolean(true);
 	
 }
