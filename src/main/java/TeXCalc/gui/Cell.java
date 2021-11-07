@@ -195,6 +195,7 @@ public class Cell {
 		});
 		//toolBar.add(toolBarp);
 		//export ;
+		export.addItemListener((e) -> { c.queueUpdate();});
 		toolBarp.add(export);
 		button = GUI.buttonSync("Append", () -> {list.increase(list.cells.indexOf(c)+1);});
 		toolBarp.add(button);	
@@ -252,6 +253,8 @@ public class Cell {
 
 	public void queueUpdate(Runnable callback) {
 		final long millis = System.currentTimeMillis();
+		if(Config.current.getLatex().getAutoExport().getValue() && list != null)
+			list.export();
 		if(cur !=null)cur.interrupt();
 		(cur = new Thread(() -> {
 			BufferedImage img = null;

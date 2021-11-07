@@ -65,7 +65,9 @@ public class CellList
 	public String FRAMEEND = "\\end{document}\n";
 	*/
 	
-	public CellList(Cell[] cells) {
+	private Main main;
+	
+	public CellList( Cell[] cells) {
 		this();
 		this.cells = new ArrayList<Cell>(Arrays.asList(cells));
 		for(int i =0; i  < this.cells.size();++i)
@@ -99,6 +101,15 @@ public class CellList
 		{
 			increase();
 		}
+	}
+	
+	public void setMain(Main m) {
+		main = m;
+	}
+	
+	public void export() {
+		if(main != null)
+			main.export();
 	}
 	
 	

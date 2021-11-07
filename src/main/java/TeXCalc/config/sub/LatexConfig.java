@@ -14,5 +14,6 @@ public class LatexConfig extends SubConfig {
 	ConfString environment = new ConfString("auto");
 	ConfBoolean autoLeftRightBracket =new ConfBoolean(true);
 	ConfBoolean autoLeftRightAbs = new ConfBoolean(true);
+	ConfBoolean autoExport = new ConfBoolean(true);
 	
 }

@@ -50,7 +50,8 @@ public class Main {
 	String version = "DEV";
 	JFrame jframe;
 	String tmp_save = "tmp_save.json~";
-	static { loadConfig();}
+	Thread cur;
+	static { loadConfig(); }
 	
 	public Main() {
 		//FlatLaf.install(new FlatLightLaf());
@@ -86,6 +87,7 @@ public class Main {
 
 		jframe.add(toolBar, BorderLayout.PAGE_START);
 		celllist = new CellList(11);
+		celllist.setMain(this);
 		refreshTabs();
 		
 		jframe.setResizable(true);
@@ -155,12 +157,15 @@ public class Main {
 	}
 	
 	public void export() {
+		if(cur != null)cur.interrupt();
+		(cur = new Thread(() -> {
 		File ef =  new File(System.getProperty("user.dir") + File.separator + "export");
 		if( ef.exists() )
 		{
+		//deleteDirectory(System.getProperty("user.dir") + File.separator + "export");
 		try {
-			FileUtils.deleteDirectory(ef);
-			//FileUtils.cleanDirectory(ef);
+			//FileUtils.deleteDirectory(ef);
+			FileUtils.cleanDirectory(ef);
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -183,7 +188,8 @@ public class Main {
 		try {
 			if(f != null && f.exists())
 			{
-				copyDirectory(f.getParentFile().getAbsolutePath(), "export");
+				FileUtils.copyDirectory(f.getParentFile(), ef);
+				//copyDirectory(f.getParentFile().getAbsolutePath(), "export");
 				/*
 				File[] fl = f.getParentFile().listFiles();
 				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export"+ File.separator + "export.pdf"));
@@ -199,6 +205,24 @@ public class Main {
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated #catch block
+			e.printStackTrace();
+		}
+
+		})).start();
+	}
+	public static void deleteDirectory(String dir) {
+	    try {
+			Files.walk(Paths.get(dir))
+				      .forEach(source -> {
+				    	 try {
+							FileUtils.deleteDirectory(source.toFile());
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+				      });
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -273,6 +297,7 @@ public class Main {
         		if(r == JOptionPane.NO_OPTION) return;
         	}
 			CellList cl = objectMapper.readValue(n.get("celllist").toString(), CellList.class);
+			cl.setMain(this);
 			cl.linkAll();
 			setCelllist(cl);
 			refreshTabs();
