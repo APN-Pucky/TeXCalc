@@ -26,6 +26,7 @@ import com.google.common.io.Files;
 import TeXCalc.config.Config;
 import TeXCalc.exec.Exec;
 import TeXCalc.gui.GUI;
+import TeXCalc.mathematica.Mathematica;
 import TeXCalc.util.IO;
 import TeXCalc.util.Task;
 import lombok.Getter;
@@ -388,6 +389,12 @@ public class Latex {
 				System.out.println("Required: " + r);
 				//TODO popup?
 			}
+		}
+		// TODO move this somewhere else?
+		if(getTop().contains("mmacells") && !filecache.containsKey("mmacells.sty")) {
+			Exec ex = new Exec("mathematica", false);
+			ex.writeFile("mmacells.sty", Mathematica.mmacells);
+			cache("mmacells.sty", new File(ex.getDirName() + "mmacells.sty"));
 		}
 		
 	}

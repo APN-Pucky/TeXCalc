@@ -65,6 +65,11 @@ public class Python implements Code{
 			"  \"nbformat_minor\": 4\n" + 
 			"}\n"; 
 	}
+	public Python() {
+		super();
+		require("\\usepackage[breakable]{tcolorbox}");
+
+	}
 	public static String toLatex(String s, Latex l) {return new Python().to(s,l);}
 	public String to(String py, Latex l) {
 		String filename = "tmp_jupyter_" + UUID.randomUUID().toString();

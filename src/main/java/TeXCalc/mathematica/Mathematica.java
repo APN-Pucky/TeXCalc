@@ -57,8 +57,8 @@ public class Mathematica implements Code {
 			init();
 			Exec ex = new Exec("mathematica", false);
 			ex.writeFile("tmp.m", math);
-			ex.writeFile("mmacells.sty", mmacells);
-			l.cache("mmacells.sty", new File(ex.getDirName() + "mmacells.sty"));
+			//ex.writeFile("mmacells.sty", mmacells);
+			//l.cache("mmacells.sty", new File(ex.getDirName() + "mmacells.sty"));
 			return inter.input("NBEval[\"" + ex.getDirName() + "tmp.m\"" + "]").replaceAll("\\s*\\\\\\s*\n*\\s*\n*\\s*>\\s*", "").replaceAll("\n\\s+","\n");
 		}
 	}
@@ -69,7 +69,7 @@ public class Mathematica implements Code {
 		}
 
 	public String input(String in) {
-		if(unlicensed)return "unlicensed";
+		if(unlicensed)return "unlicensed Mathematica";
 		PrintWriter pr = new PrintWriter(p.getOutputStream());
 		pr.println(in);
 		pr.flush();
@@ -99,7 +99,7 @@ public class Mathematica implements Code {
         	}
         	if(ar[ar.length-1].matches(".*activation key.*")) {
         		unlicensed = true;
-        		return "unlicensed";
+        		return "unlicensed Mathematica";
         	}
         	if(ar[ar.length-1].matches(".*Out\\[\\d+\\]=.*")) {
         		//System.out.println("RESET");
