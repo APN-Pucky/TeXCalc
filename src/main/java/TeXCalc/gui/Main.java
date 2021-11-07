@@ -12,6 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
@@ -28,10 +29,10 @@ import com.github.weisj.darklaf.theme.DarculaTheme;
 
 import TeXCalc.compat.Compat;
 import TeXCalc.config.Config;
-import TeXCalc.config.MainConfig;
 import TeXCalc.util.Task;
 import de.neuwirthinformatik.Alexander.GitJarUpdate.Info;
 import de.neuwirthinformatik.Alexander.GitJarUpdate.Update;
+import de.neuwirthinformatik.Alexander.GitJarUpdate.Version;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -251,6 +252,12 @@ public class Main {
 		ObjectMapper objectMapper = new ObjectMapper();
         try {
         	JsonNode n = objectMapper.readTree(Compat.fix(file));
+        	if(new Version(n.get("version").asText()).compareTo( new Version(Info.VERSION)) > 0)
+        	{
+        		int r =JOptionPane.showConfirmDialog(jframe, "File version " + n.get("version").asText() +" > TeXCalc version "+Info.VERSION + "\nContinue?" , "Warning",
+        		        JOptionPane.YES_NO_OPTION);
+        		if(r == JOptionPane.NO_OPTION) return;
+        	}
 			CellList cl = objectMapper.readValue(n.get("celllist").toString(), CellList.class);
 			cl.linkAll();
 			setCelllist(cl);
