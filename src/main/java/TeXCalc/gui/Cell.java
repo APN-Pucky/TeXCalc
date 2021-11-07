@@ -30,6 +30,7 @@ import TeXCalc.latex.wrap.math.Align;
 import TeXCalc.latex.wrap.math.Equation;
 import TeXCalc.mathematica.Mathematica;
 import TeXCalc.python.Python;
+import TeXCalc.util.StringUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -113,10 +114,13 @@ public class Cell {
 		text.setLineWrap(true);
 		// text.setPreferredSize(new Dimension(150,100));
 		// text.setLineWrap(true);
+		Cell t = this;
 		text.addKeyListener((new KeyListener() {
 
 			@Override
 			public void keyTyped(KeyEvent e) {
+				text.setRows(StringUtils.count(text.getText(), '\n', 0)+3);
+				list.re();
 				queueUpdate();
 			}
 
@@ -131,7 +135,6 @@ public class Cell {
 		}));
 		queueUpdate();
 	}
-
 	public String getText() {
 		return text.getText();
 	}
@@ -220,7 +223,6 @@ public class Cell {
 					){
 				// queue updates on cells after this
 				list.updateFrom(this);
-				
 			}
 		}
 	}

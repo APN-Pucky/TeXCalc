@@ -1,6 +1,7 @@
 package TeXCalc.gui;
 
 import java.awt.BorderLayout;
+import java.awt.ScrollPane;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -99,7 +100,10 @@ public class Main {
 	private void refreshTabs() {
 		if(tp!=null)jframe.remove(tp);
 		tp= new JTabbedPane();
-		tp.addTab("Notebook",null,jsp =new JScrollPane(celllist.getPanel()),"");
+		tp.addTab("Notebook",null,jsp =new JScrollPane(celllist.getPanel()
+				,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
+	            ),"");
 		jsp.getVerticalScrollBar().setUnitIncrement(20);
 		tp.addTab("Settings",null,jsp =new JScrollPane(celllist.getLatex().getPanel()),"");
 		jsp.getVerticalScrollBar().setUnitIncrement(20);

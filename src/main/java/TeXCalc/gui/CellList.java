@@ -1,7 +1,7 @@
 package TeXCalc.gui;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
@@ -9,21 +9,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import javax.swing.BoxLayout;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Group;
+import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonIgnoreType;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import TeXCalc.latex.Latex;
@@ -35,6 +30,10 @@ public class CellList
 	@JsonIgnore
 	@Getter
 	private JPanel panel;
+	@JsonIgnore
+	@Getter
+	private GroupLayout layout;
+	private Group hg,vg,hg1,hg2;
 	//@JsonValue
 	//@JsonProperty("property")
 	@JsonSerialize(as=ArrayList.class, contentAs=Cell.class)
@@ -80,7 +79,20 @@ public class CellList
 	public CellList(int number) {
 		panel = new JPanel();
 		latex = new Latex();
-		panel.setLayout(new GridBagLayout());
+		layout = new GroupLayout(panel);
+		panel.setLayout(layout);
+		layout.setAutoCreateGaps(true);
+		layout.setAutoCreateContainerGaps(true);
+		hg = layout.createSequentialGroup();
+		hg1 = layout.createParallelGroup();
+		hg2 = layout.createParallelGroup();
+		vg = layout.createSequentialGroup();
+		hg.addGroup(hg1);
+		hg.addGroup(hg2);
+
+		layout.setHorizontalGroup(hg);
+		layout.setVerticalGroup(vg);
+		System.out.println("max" + layout.maximumLayoutSize(panel));
 		for ( int i = 0 ;  i  < number ; ++i)
 		{
 			increase();
@@ -120,31 +132,35 @@ public class CellList
 		
 		GridBagConstraints c = new GridBagConstraints();
 		
-		c.fill = GridBagConstraints.NONE;
-		c.weightx = 0.01;
-		c.weighty = 0.1;
-		c.gridx = 0;
-		c.gridy = index;
-		//panel.add(tools, c);
 		
-		JPanel tmpp = new JPanel();
+		JPanel tmpp = new JPanel(layout);
 		tmpp.setLayout(new BoxLayout(tmpp, BoxLayout.Y_AXIS));
 		tmpp.add(tools);
-		tmpp.add(new JScrollPane(cell.text));
-		c.fill = GridBagConstraints.NONE;
-		c.weightx = 0.3;
-		c.weighty = 0.1;
-		c.gridx = 1;
-		c.gridy = index;
-		panel.add(tmpp, c);
+
+		//tmpp.add(cell.text);
+		///*
 		
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.weightx = 0.7;
-		c.weighty = 0.1;
-		c.gridx = 2;
-		c.gridy = index;
+		
+		
+		tmpp.add(new JScrollPane(cell.text
+				,JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+	            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
+				));
+				//*/
+
+		ParallelGroup p = layout.createParallelGroup(GroupLayout.Alignment.CENTER);
+		vg.addGroup(p);
+		p.addComponent(tmpp);
+		p.addComponent(cell.icon);
+		hg1.addComponent(tmpp);
+		hg2.addComponent(cell.icon);
+				
+		//panel.add(tmpp, c);
+		
+		//c.fill = GridBagConstraints.HORIZONTAL;
 		//GUI.log.m(cell.getText()+ (cell.getLatex()==null));
-		panel.add(cell.icon, c);
+		//panel.add(cell.icon, c);
+		//panel.setPreferredSize(new Dimension(1000,200));
 		barmap.put(cell, tmpp);	
 		
 	}
