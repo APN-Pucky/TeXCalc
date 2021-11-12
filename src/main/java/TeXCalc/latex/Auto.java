@@ -29,6 +29,9 @@ public class Auto implements TeXable{
 		{
 			return new Python();
 		}
+		if(s.contains("^") || s.contains("_")) {
+			return new Equation();
+		}
 		if(s.contains("#"))
 		{
 			return new Markdown();
@@ -43,7 +46,7 @@ public class Auto implements TeXable{
 
 	@Override
 	public String toDocument(String s, Latex l) {
-		return guess(s).toStandalone(s, l);
+		return guess(s).toDocument(s, l);
 	}
 
 }

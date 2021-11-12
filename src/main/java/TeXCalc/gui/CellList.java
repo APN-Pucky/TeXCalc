@@ -262,7 +262,7 @@ public class CellList
 		{
 			if(barmap.get(c).export.isSelected())
 			{
-				ret += c.toLatex() + "\n";
+				ret += c.toLatex() ;
 			}
 		}
 		ret+= latex.getEnd();
