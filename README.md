@@ -33,3 +33,4 @@ Also needs "\usepackage{mmacells}".
 * missing output on simple test latex input
   * remove \usepackage{markdown} or install/fix it
   * remove \usepackage{mmacells} (needed for Mathematica)
+  * remove everything except for the needed usepackages in the Settings
