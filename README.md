@@ -14,6 +14,8 @@ Live rendered latex
   * pdftoppm
 * (python3/Anaconda)
 * (math/Mathematica)
+* 
+## Features
 
 ### LaTeX
 Is run in preview standalone mode for displaying cells.
