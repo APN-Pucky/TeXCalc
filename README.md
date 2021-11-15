@@ -31,5 +31,5 @@ Also needs "\usepackage{mmacells}".
 
 ## Troubleshooting
 * missing output on simple test latex input
- * remove \usepackage{markdown} or install/fix it
- * remove \usepackage{mmacells} (needed for Mathematica)
+  * remove \usepackage{markdown} or install/fix it
+  * remove \usepackage{mmacells} (needed for Mathematica)
