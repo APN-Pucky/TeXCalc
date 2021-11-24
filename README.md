@@ -34,3 +34,14 @@ Also needs "\usepackage{mmacells}".
   * remove \usepackage{markdown} or install/fix it
   * remove \usepackage{mmacells} (needed for Mathematica)
   * remove everything except for the needed usepackages in the Settings
+
+## Development
+
+Import the project as a git project into eclipse. 
+Then run
+
+```sh
+$ ./gradlew cleanEclipse eclipse
+```
+
+to fix the setup.
