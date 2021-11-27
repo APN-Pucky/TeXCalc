@@ -44,12 +44,26 @@ public class Exec {
 			GUI.log.d("Running " + name + " in " + dirName + "$ ./" + args[0]);
 			long startTime = System.nanoTime();
 			p = pb.start();
-			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), Task.id()+"",
+			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), Task.id() + "",
 					Config.current.getDebug().getPrintOuput().getValue());
-			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), Task.id()+"",
+			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), Task.id() + "",
 					Config.current.getDebug().getPrintError().getValue());
 			Task.startUntracked(fluxSortie);
 			Task.startUntracked(fluxErreur);
+			Thread et = Thread.currentThread();
+			Task.startUntracked(() -> {
+				try {
+					Thread.sleep(1000 * Config.current.getGeneral().getThreadsTimeoutSeconds().getValue());
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if(et.isAlive())
+				{
+					et.interrupt();
+					GUI.log.e("Thread froze -> killed: " + dir + " $ " +String.join(" ", args) , "Exec");
+				}
+			});
 			GUI.log.d("w8 " + name + " in " + dirName + "$ ./" + args[0]);
 			int exit = p.waitFor();
 			GUI.log.d("w8d " + name + " in " + dirName + "$ ./" + args[0]);

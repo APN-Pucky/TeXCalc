@@ -56,7 +56,7 @@ public class Task {
 			boolean runit = false;
 			while (true) {
 				synchronized (Task.class) {
-					if (getThreads() < Config.current.getLatex().getMaxThreads().getValue() || Config.current.getLatex().getMaxThreads().getValue() <0) {
+					if (getThreads() < Config.current.getGeneral().getMaxThreads().getValue() || Config.current.getGeneral().getMaxThreads().getValue() <0) {
 						incThreads(1);
 						runit = true;
 					}

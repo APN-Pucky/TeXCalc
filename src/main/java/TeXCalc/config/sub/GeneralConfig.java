@@ -11,12 +11,8 @@ import lombok.Data;
 
 @JsonAutoDetect
 @Data
-public class LatexConfig extends SubConfig {
-	ConfString defaultEngine = new ConfString("lualatex");
-
-	ConfString environment = new ConfString("auto");
-	ConfBoolean autoLeftRightBracket =new ConfBoolean(true);
-	ConfBoolean autoLeftRightAbs = new ConfBoolean(true);
-	ConfBoolean autoExport = new ConfBoolean(true);
+public class GeneralConfig extends SubConfig {
+	ConfInteger maxThreads = new ConfInteger(-1);
+	ConfInteger threadsTimeoutSeconds = new ConfInteger(30);
 	
 }

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import TeXCalc.config.conf.ConfElement;
 import TeXCalc.config.sub.DebugConfig;
 import TeXCalc.config.sub.GUIConfig;
+import TeXCalc.config.sub.GeneralConfig;
 import TeXCalc.config.sub.HotkeyConfig;
 import TeXCalc.config.sub.LatexConfig;
 import TeXCalc.config.sub.MathematicaConfig;
@@ -36,6 +37,7 @@ public class MainConfig extends Config{
 	//public static MainConfig current = new MainConfig();
 	//public static final String configfile = "main_conf.json";
 	
+	GeneralConfig general = new GeneralConfig();
 	GUIConfig gui = new GUIConfig();
 	LatexConfig latex = new LatexConfig();
 	PythonConfig python3 = new PythonConfig();

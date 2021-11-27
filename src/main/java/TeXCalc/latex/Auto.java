@@ -29,7 +29,7 @@ public class Auto implements TeXable{
 		{
 			return new Python();
 		}
-		if(s.contains("^") || s.contains("_")) {
+		if(s.contains("^") || s.contains("_") || s.contains("\\frac")) {
 			return new Equation();
 		}
 		if(s.contains("#"))
