@@ -224,7 +224,7 @@ public class Main {
 	}
 
 	public void save() {
-		if(GUI.confirm(jframe,savename.getText(),"save") ) {
+		if(!(new File(savename.getText())).exists() || GUI.confirm(jframe,savename.getText(),"save") ) {
 			save(savename.getText());
 		}
 	}

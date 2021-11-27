@@ -119,8 +119,8 @@ public class Python implements Code{
 			long startTime = System.nanoTime();
 			Process p = pb.start();
 			if(PRINT) {
-				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), true);
-				StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), true);
+				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), Task.id()+"", true);
+				StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), Task.id()+"", true);
 				Task.startUntracked(fluxSortie);
 				Task.startUntracked(fluxErreur);
 			}
@@ -139,8 +139,8 @@ public class Python implements Code{
 			Process p = pb.start();
 			StreamPrinter fluxErreur = null;
 			//if(PRINT) {
-				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), PRINT);
-				fluxErreur = new StreamPrinter(p.getErrorStream(), PRINT);
+				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(),Task.id()+"", PRINT);
+				fluxErreur = new StreamPrinter(p.getErrorStream(),Task.id()+"", PRINT);
 				Task.startUntracked(fluxSortie);
 				Task.startUntracked(fluxErreur);
 			//}
