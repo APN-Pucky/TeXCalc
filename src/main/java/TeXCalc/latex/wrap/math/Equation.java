@@ -7,15 +7,25 @@ import TeXCalc.latex.wrap.Wrapper;
 import lombok.Getter;
 import lombok.Setter;
 
-public class Equation extends Wrapper{
+public class Equation extends Math{
 	public Equation() {
-		setBegin(Latex.begin("equation"));
-		setEnd(Latex.end("equation"));
+		super();
+		//setBegin(getBegin()+Latex.begin("aligned"));
+		//setEnd(Latex.end("aligned")+getEnd());
 	}
 	public String toStandalone(String s) {
-		String ret = toDocument(s);
-		ret = ret.replaceAll(Pattern.quote(Latex.begin("equation")), "\\$");
-		ret = ret.replaceAll(Pattern.quote(Latex.end("equation")), "\\$");
-		return ret;
+		String ret = "";
+		ret +="$";
+		ret += to(s);
+		ret += "$";
+		return (ret);
+		
+	}
+	public String toDocument(String s) {
+		String ret = "";
+		ret +=Latex.begin("equation");
+		ret += to(s);
+		ret +=Latex.end("equation");
+		return ret;	
 	}
 }
