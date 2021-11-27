@@ -14,6 +14,8 @@ Live rendered latex
   * pdftoppm
 * (python3/Anaconda)
 * (math/Mathematica)
+* 
+## Features
 
 ### LaTeX
 Is run in preview standalone mode for displaying cells.
@@ -25,3 +27,21 @@ Each cell is separate from others, so no variables are saved inbetween them.
 Results/variables/definitions can be reused across cells.
 Standalone documentclass must be without "crop" and "varwidth".
 Also needs "\usepackage{mmacells}".
+
+
+## Troubleshooting
+* missing output on simple test latex input
+  * remove \usepackage{markdown} or install/fix it
+  * remove \usepackage{mmacells} (needed for Mathematica)
+  * remove everything except for the needed usepackages in the Settings
+
+## Development
+
+Import the project as a git project into eclipse. 
+Then run
+
+```sh
+$ ./gradlew cleanEclipse eclipse
+```
+
+to fix the setup.
