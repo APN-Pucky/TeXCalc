@@ -6,6 +6,7 @@ import java.lang.ProcessBuilder.Redirect;
 import java.util.UUID;
 
 import TeXCalc.config.Config;
+import TeXCalc.gui.GUI;
 import TeXCalc.latex.StreamPrinter;
 import TeXCalc.util.IO;
 import TeXCalc.util.Task;
@@ -20,8 +21,12 @@ public class Exec {
 	File dir;
 	String name;
 	boolean forcestop;
-	public Exec(String name) {this(name,true);}
-	public Exec(String name,boolean forcestop) {
+
+	public Exec(String name) {
+		this(name, true);
+	}
+
+	public Exec(String name, boolean forcestop) {
 		this.name = name;
 		this.forcestop = forcestop;
 		uuid = UUID.randomUUID().toString();
@@ -29,43 +34,47 @@ public class Exec {
 		dir = new File(dirName);
 		dir.mkdirs();
 	}
-	
+
 	public String exec(String... args) {
-		System.out.println("Execute " + name +  " in " + dirName + "$ ./" + args[0]); 
+		GUI.log.d("Execute " + name + " in " + dirName + "$ ./" + args[0]);
 		ProcessBuilder pb = new ProcessBuilder(args);
 		Process p = null;
 		pb.directory(dir);
 		try {
 			long startTime = System.nanoTime();
 			p = pb.start();
-			StreamPrinter fluxErreur=null;
-				StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(),Config.current.getDebug().getPrintOuput().getValue());
-				fluxErreur = new StreamPrinter(p.getErrorStream(), Config.current.getDebug().getPrintError().getValue());
-				Task.startUntracked(fluxSortie);
-				Task.startUntracked(fluxErreur);
+			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(),
+					Config.current.getDebug().getPrintOuput().getValue());
+			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(),
+					Config.current.getDebug().getPrintError().getValue());
+			Task.startUntracked(fluxSortie);
+			Task.startUntracked(fluxErreur);
 			int exit = p.waitFor();
-			if(exit==1) return fluxErreur.text;
+			if (exit == 1)
+				return fluxErreur.text;
 			long stopTime = System.nanoTime();
-			if(TIME)System.out.println((stopTime - startTime) / 1.e9 + " s");
+			if (TIME)
+				System.out.println((stopTime - startTime) / 1.e9 + " s");
 		} catch (IOException ex) {
 			ex.printStackTrace();
-		}
-		catch(InterruptedException ie) {
-			System.out.println("stopped, due to outdated");
-			if(p!=null) {
-				if(forcestop)
+		} catch (InterruptedException ie) {
+			GUI.log.m("stopped, due to outdated");
+			if (p != null) {
+				if (forcestop)
 					p.destroyForcibly();
-				//else
-					//p.destroy();
+				// else
+				// p.destroy();
 			}
 		}
 		return "";
 	}
-	public void writeFile(String filename ,String cont) {
-		IO.writeFile(getDirName() + filename ,cont);
+
+	public void writeFile(String filename, String cont) {
+		IO.writeFile(getDirName() + filename, cont);
 	}
+
 	public String readFile(String filename) {
-		return IO.readFile(getDirName() + filename); 
-		
+		return IO.readFile(getDirName() + filename);
+
 	}
 }

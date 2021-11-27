@@ -91,6 +91,10 @@ public class Task {
 		}
 	}
 	
+	public static long id() {
+		return  Thread.currentThread().getId();
+	}
+	
 	
 	public static void sleepForAll()
 	{

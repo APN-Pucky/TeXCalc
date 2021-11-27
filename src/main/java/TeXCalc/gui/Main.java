@@ -281,6 +281,7 @@ public class Main {
 	        if (returnVal == JFileChooser.APPROVE_OPTION) {
 	            File file = fc.getSelectedFile();
 	            load(file);
+	            savename.setText(file.getAbsolutePath());
 	        } else {
 	            GUI.log.m("Open command cancelled by user.");
 	        }

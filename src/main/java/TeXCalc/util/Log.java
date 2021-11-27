@@ -55,17 +55,16 @@ public class Log
 	    return Thread.currentThread().getStackTrace()[5].getClassName();
 	}
 	
-	
+
 	
 	public void print(String msg, Level l,String[] src)
 	{
-		String date = "[" + new SimpleDateFormat("HH:mm:ss").format( new Date() ) + "] " + getClassName() + ":" + getLineNumber() + ": ";
+		String date = "[" + new SimpleDateFormat("HH:mm:ss").format( new Date() ) + "] |"+ Task.id() + "| " + getClassName() + ":" + getLineNumber() + ": ";
 		Style s = null;//hm_style.get(l);
 		String src_string = "";
 		for(String st : src)src_string += st + ","; 
 		
 		System.out.println(date + "{" +src_string+"}: "+ msg);
-					
 	}
 	
 	public void log(Level l, String msg,String... src)

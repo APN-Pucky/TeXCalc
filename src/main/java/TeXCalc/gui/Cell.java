@@ -7,12 +7,14 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JToolBar;
 
@@ -74,6 +76,9 @@ public class Cell {
 	protected JTextArea text;
 	protected JCheckBox export= GUI.check("export");
 	protected JLabel icon = new JLabel();
+	//protected Bar bar = null;
+	JPanel panel;
+	JToolBar bar;
 	private Thread cur = null;
 
 	@Getter
@@ -95,13 +100,6 @@ public class Cell {
 	
 
 	private boolean updating = false, reupdate = false;
-
-	@Data
-	@AllArgsConstructor
-	static class Bar {
-		JPanel panel;
-		JCheckBox export;
-	}
 	
 	public Cell() {
 		this("");
@@ -172,7 +170,13 @@ public class Cell {
 		export.setSelected(exp);
 	}
 	
-	protected Bar addButtons(JToolBar toolBar) {
+	protected void initBar() {
+		bar = new JToolBar(JToolBar.HORIZONTAL);
+		bar.setFloatable(false);
+		addButtons();
+	}
+	
+	protected void addButtons() {
 		Cell c = this;
 		JButton button = null;
 		JPanel toolBarp = new JPanel();
@@ -209,14 +213,25 @@ public class Cell {
 		toolBarp.add(button);
 
 		
-		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(list.panel,"RM","RM") ){list.unlink(c);list.cells.remove(list.cells.indexOf(c));list.panel.revalidate();list.panel.repaint();}});
+		button = GUI.buttonSync("Remove", () -> {if (c.getText().equals("") || GUI.confirm(list.panel,"RM","RM") ){list.remove(c);}});
 		toolBarp.add(button);	
 
 		
 
-		toolBar.add(toolBarp);
+		bar.add(toolBarp);
+		
+		JPanel tmpp = new JPanel();
+		tmpp.setLayout(new BoxLayout(tmpp, BoxLayout.Y_AXIS));
+		tmpp.add(bar);
+		
+		JScrollPane js = new JScrollPane(text, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-		return new Bar(null,export);
+		tmpp.add(js);
+		
+		panel = tmpp;
+
+		//return new Bar(tmpp,toolBar,export);
 	}
 
 	public String toLatex() {

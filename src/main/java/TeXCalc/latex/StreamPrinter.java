@@ -36,7 +36,8 @@ public class StreamPrinter implements Runnable {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+        	if(!e.getMessage().equals("Stream closed"))
+        		e.printStackTrace();
         }
     }
 }

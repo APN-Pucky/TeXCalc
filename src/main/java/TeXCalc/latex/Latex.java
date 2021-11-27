@@ -386,7 +386,7 @@ public class Latex {
 	public void checkRequirements(String[] requirements) {
 		for(String r : requirements) {
 			if(!getTop().contains(r)) {
-				System.out.println("Required: " + r);
+				//GUI.log.w("Required: " + r);
 				//TODO popup?
 			}
 		}
