@@ -236,7 +236,7 @@ public class GUI {
 
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				Task.start(run);
+				Task.startUntracked(run);
 			}
 
 		});

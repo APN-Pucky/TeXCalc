@@ -86,7 +86,7 @@ public class Main {
 
 
 		jframe.add(toolBar, BorderLayout.PAGE_START);
-		celllist = new CellList(11);
+		celllist = new CellList(0);
 		celllist.setMain(this);
 		refreshTabs();
 		
@@ -157,8 +157,8 @@ public class Main {
 	}
 	
 	public void export() {
-		if(cur != null)cur.interrupt();
-		(cur = new Thread(() -> {
+		Task.stop(cur);
+		cur = Task.append(() -> {
 		File ef =  new File(System.getProperty("user.dir") + File.separator + "export");
 		if( ef.exists() )
 		{
@@ -172,43 +172,20 @@ public class Main {
 		}
 		}
 		String tex = celllist.toLaTeX();
-		/*
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter(System.getProperty("user.dir")+ File.separator + "export" + File.separator +"export.tex", "UTF-8");
-			writer.print(tex);
-			writer.close();
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		*/
 		celllist.getLatex().cleanCache(tex);
 		File f = celllist.getLatex().toPdf(tex);
 		try {
 			if(f != null && f.exists())
 			{
 				FileUtils.copyDirectory(f.getParentFile(), ef);
-				//copyDirectory(f.getParentFile().getAbsolutePath(), "export");
-				/*
-				File[] fl = f.getParentFile().listFiles();
-				Files.move(f  ,  new File(System.getProperty("user.dir") + File.separator + "export"+ File.separator + "export.pdf"));
-				for(File ff : fl)
-					Files.copy(ff, new File(System.getProperty("user.dir") + File.separator + "export" + File.separator + ff.getName()));
-				try {
-					ImageIO.write(celllist.getLatex().pdfToImage(new File(System.getProperty("user.dir") + File.separator + "export"+ File.separator + "export.pdf")), "png", new File(System.getProperty("user.dir")  + File.separator + "export"+ File.separator + "export.png"));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				*/
+			
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated #catch block
 			e.printStackTrace();
 		}
 
-		})).start();
+		});
 	}
 	public static void deleteDirectory(String dir) {
 	    try {

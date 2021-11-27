@@ -5,16 +5,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import TeXCalc.gui.GUI;
+
 public class StreamPrinter implements Runnable {
 
     // Source: http://labs.excilys.com/2012/06/26/runtime-exec-pour-les-nuls-et-processbuilder/
     private final InputStream inputStream;
     public String text = "";
+    public String addl = "";
     private boolean print;
 
-    public StreamPrinter(InputStream inputStream, boolean print) {
+    public StreamPrinter(InputStream inputStream, String addl, boolean print) {
         this.inputStream = inputStream;
         this.print = print;
+        this.addl = addl;
     }
 
     private BufferedReader getBufferedReader(InputStream is) {
@@ -28,7 +32,7 @@ public class StreamPrinter implements Runnable {
         try {
             while ((ligne = br.readLine()) != null) {
                 if (print) {
-                    System.out.println(ligne);
+                    GUI.log.m(addl + " " +ligne);
                     text += ligne + "\n";
                 }
                 else {

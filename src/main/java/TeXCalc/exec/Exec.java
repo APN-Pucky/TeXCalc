@@ -41,24 +41,27 @@ public class Exec {
 		Process p = null;
 		pb.directory(dir);
 		try {
+			GUI.log.d("Running " + name + " in " + dirName + "$ ./" + args[0]);
 			long startTime = System.nanoTime();
 			p = pb.start();
-			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(),
+			StreamPrinter fluxSortie = new StreamPrinter(p.getInputStream(), Task.id()+"",
 					Config.current.getDebug().getPrintOuput().getValue());
-			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(),
+			StreamPrinter fluxErreur = new StreamPrinter(p.getErrorStream(), Task.id()+"",
 					Config.current.getDebug().getPrintError().getValue());
 			Task.startUntracked(fluxSortie);
 			Task.startUntracked(fluxErreur);
+			GUI.log.d("w8 " + name + " in " + dirName + "$ ./" + args[0]);
 			int exit = p.waitFor();
+			GUI.log.d("w8d " + name + " in " + dirName + "$ ./" + args[0]);
 			if (exit == 1)
 				return fluxErreur.text;
 			long stopTime = System.nanoTime();
 			if (TIME)
-				System.out.println((stopTime - startTime) / 1.e9 + " s");
+				GUI.log.m((stopTime - startTime) / 1.e9 + " s");
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		} catch (InterruptedException ie) {
-			GUI.log.m("stopped, due to outdated");
+			GUI.log.m("stopped, due to outdated " + dir + "  " + String.join(" ", args));
 			if (p != null) {
 				if (forcestop)
 					p.destroyForcibly();

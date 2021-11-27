@@ -40,6 +40,7 @@ import TeXCalc.latex.wrap.math.Equation;
 import TeXCalc.mathematica.Mathematica;
 import TeXCalc.python.Python;
 import TeXCalc.util.StringUtils;
+import TeXCalc.util.Task;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -270,8 +271,8 @@ public class Cell {
 		final long millis = System.currentTimeMillis();
 		if(Config.current.getLatex().getAutoExport().getValue() && list != null)
 			list.export();
-		if(cur !=null)cur.interrupt();
-		(cur = new Thread(() -> {
+		Task.stop(cur);
+		cur = Task.append(() -> {
 			BufferedImage img = null;
 			if (latex != null)
 				img = latex.snipImage(toLatex(true, true));
@@ -286,7 +287,7 @@ public class Cell {
 					new Thread(callback).start();
 				}
 			}
-		})).start();
+		});
 	}
 
 	private long lastmillis = 0;

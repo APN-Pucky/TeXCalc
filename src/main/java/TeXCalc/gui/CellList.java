@@ -39,7 +39,7 @@ public class CellList {
 	// @JsonProperty("property")
 	@JsonSerialize(as = ArrayList.class, contentAs = Cell.class)
 	public ArrayList<Cell> cells = new ArrayList<Cell>();
-	@JsonIgnore
+	//@JsonIgnore
 	//private HashMap<Cell, Cell.Bar> barmap = new HashMap<Cell, Cell.Bar>();
 
 	// @JsonValue
