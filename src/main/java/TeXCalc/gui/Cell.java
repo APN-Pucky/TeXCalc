@@ -253,7 +253,7 @@ public class Cell {
 		if (math) {
 			return hm.get(environment).toStandalone(getText(),latex);
 		} else {
-			return hm.get(environment).toDocument(getText(),latex);
+			return hm.get(environment).toDocument(getText(),latex) + "\n";
 		}
 		/*
 		 * String ret = ""; ret += begin[getEnvIndex(environment)] + "\n"; ret

@@ -19,6 +19,6 @@ public class Wrapper implements DirectTeXable{
 	}
 	public String toDocument(String s) {
 		if(s.trim().equals(""))return"";
-		return getBegin() +  "\n" + to(s) +   "\n" + getEnd() + "\n";
+		return getBegin() +   to(s) +    getEnd() ;
 	}
 }

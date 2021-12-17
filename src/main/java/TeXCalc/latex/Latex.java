@@ -4,13 +4,12 @@ package TeXCalc.latex;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.UUID;
 
 import javax.imageio.ImageIO;
 import javax.swing.BoxLayout;
@@ -219,7 +218,14 @@ public class Latex {
 		Exec ex = new Exec("tex");
 		IO.writeFile(ex.getDirName() + filename + ".tex", latex);
 		pasteCache(ex.getDirName());
-		ex.exec(getEngine(), "-halt-on-error", "--shell-escape", filename + ".tex");
+		String[] source = getEngine().split(" ");
+		String[] copy = new String[source.length + 3];
+		System.arraycopy(source, 0, copy, 0, source.length);
+		copy[source.length] = "-halt-on-error";
+		copy[source.length+1] = "--shell-escape";
+		copy[source.length+2] = filename + ".tex";
+
+		ex.exec(copy);
 
 		File ret_file = new File(ex.getDirName() + File.separator + ".." + File.separator + filename + ".pdf");
 
