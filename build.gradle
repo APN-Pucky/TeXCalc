@@ -37,27 +37,29 @@ dependencies {
     
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.11.0.rc1'
     
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.11.0.rc1'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.13.3'
     implementation group: 'commons-io', name: 'commons-io', version: '2.5'
     
     implementation group: 'org.bitbucket.cowwoc', name: 'diff-match-patch', version: '1.2'
     implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
-    implementation group: 'com.github.weisj', name: 'darklaf-core', version: '2.7.2'
+    implementation group: 'com.github.weisj', name: 'darklaf-core', version: '3.0.0'
     implementation group: 'com.jidesoft', name: 'jide-oss', version: '3.6.18'
     
     implementation 'com.github.APN-Pucky:GitJarUpdate:0.0.7'
+
 }
 
 task fatJar(type: Jar) {
-	manifest {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
         attributes 'Implementation-Title': project.name,
         	'Implementation-Version': versionDetails().lastTag,
         	'Main-Class': 'TeXCalc.debug.DebugMain'
     }
     baseName = project.name + '-all'
     from { 
-    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }{
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+       configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }{
+       exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     }
     with jar
 }
