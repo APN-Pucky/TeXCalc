@@ -50,15 +50,16 @@ dependencies {
 }
 
 task fatJar(type: Jar) {
-	manifest {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    manifest {
         attributes 'Implementation-Title': project.name,
         	'Implementation-Version': versionDetails().lastTag,
         	'Main-Class': 'TeXCalc.debug.DebugMain'
     }
     baseName = project.name + '-all'
     from { 
-    configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }{
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+       configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }{
+       exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
     }
     with jar
 }
