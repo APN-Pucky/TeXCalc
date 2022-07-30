@@ -43,7 +43,7 @@ dependencies {
     implementation group: 'org.bitbucket.cowwoc', name: 'diff-match-patch', version: '1.2'
     implementation group: 'com.formdev', name: 'flatlaf', version: '0.45'
     implementation group: 'com.fifesoft', name: 'rsyntaxtextarea', version: '3.1.1'
-	implementation group: 'com.github.weisj', name: 'darklaf-core', version: '2.7.2'
+	implementation group: 'com.github.weisj', name: 'darklaf-core', version: '3.0.0'
 	implementation group: 'com.jidesoft', name: 'jide-oss', version: '3.6.18'
 
 	implementation 'com.github.APN-Pucky:GitJarUpdate:0.0.7'
