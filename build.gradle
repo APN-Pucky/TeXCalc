@@ -45,7 +45,7 @@ dependencies {
     implementation group: 'com.github.weisj', name: 'darklaf-core', version: '3.0.0'
     implementation group: 'com.jidesoft', name: 'jide-oss', version: '3.6.18'
     
-    implementation 'com.github.APN-Pucky:GitJarUpdate:0.0.7'
+    implementation 'com.github.APN-Pucky:GitJarUpdate:0.0.10'
 
 }
 
