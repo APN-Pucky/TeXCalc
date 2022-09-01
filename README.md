@@ -34,6 +34,7 @@ Also needs "\usepackage{mmacells}".
   * remove \usepackage{markdown} or install/fix it
   * remove \usepackage{mmacells} (needed for Mathematica)
   * remove everything except for the needed usepackages in the Settings
+  * ImageMagick might need permission to edit/write pdfs
 
 ## Development
 
